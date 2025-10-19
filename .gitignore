@@ -12,6 +12,23 @@
 /[Uu]ser[Ss]ettings/
 *.log
 
+#ignore the models
+*.fbx
+3D_MODELS/
+
+# Ignore all Library content
+Library/*
+Library/
+ArtifactDB
+
+# BUT keep binary lib files
+!Library/**/*.dll
+!Library/**/*.dylib
+!Library/**/*.so
+!Library/**/*.a
+!Library/**/*.lib
+
+
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
 /[Mm]emoryCaptures/
