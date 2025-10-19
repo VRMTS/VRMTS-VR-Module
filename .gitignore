@@ -18,6 +18,7 @@ VRMTS/Temp/
 #ignore the models
 *.fbx
 3D_MODELS/
+Blender-work/
 
 # Ignore all Library content
 Library/*
