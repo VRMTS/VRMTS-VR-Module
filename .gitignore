@@ -12,6 +12,9 @@
 /[Uu]ser[Ss]ettings/
 *.log
 
+# Unity Temp files
+VRMTS/Temp/
+
 #ignore the models
 *.fbx
 3D_MODELS/
