@@ -19,6 +19,7 @@ public class MainMenuManager : MonoBehaviour
     public float rotationSpeed = 1.0f;
 
     private bool hasPlayedIntro = false;
+    private static bool hasSeenLoginThisSession = false;
 
     void Start()
     {
@@ -28,15 +29,26 @@ public class MainMenuManager : MonoBehaviour
         userCanvas.alpha = 0f;
         userCanvas.gameObject.SetActive(false);
 
-        // Start with login canvas visible
-        loginCanvas.alpha = 0f;
-        loginCanvas.gameObject.SetActive(true);
-        if (welcomeClip != null && audioSource != null)
+        if (!hasSeenLoginThisSession)
         {
-            audioSource.PlayOneShot(welcomeClip);
-            //yield return new WaitForSeconds(welcomeClip.length + 0.5f);
+            // First time this session - show login canvas and play welcome audio
+            loginCanvas.alpha = 0f;
+            loginCanvas.gameObject.SetActive(true);
+            if (welcomeClip != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(welcomeClip);
+            }
+            StartCoroutine(FadeCanvas(loginCanvas, 0f, 1f, fadeDuration));
         }
-        StartCoroutine(FadeCanvas(loginCanvas, 0f, 1f, fadeDuration));
+        else
+        {
+            // Already seen login this session - go straight to main view
+            loginCanvas.gameObject.SetActive(false);
+            moduleCanvas.gameObject.SetActive(true);
+            userCanvas.gameObject.SetActive(true);
+            moduleCanvas.alpha = 1f;
+            userCanvas.alpha = 1f;
+        }
     }
 
     void Update()
@@ -50,6 +62,7 @@ public class MainMenuManager : MonoBehaviour
         if (!hasPlayedIntro)
         {
             hasPlayedIntro = true;
+            hasSeenLoginThisSession = true;
             StartCoroutine(TransitionToMain());
         }
     }
