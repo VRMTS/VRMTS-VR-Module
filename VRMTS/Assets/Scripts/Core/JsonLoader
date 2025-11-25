@@ -35,3 +35,8 @@ public static class JsonLoader
         Debug.Log($"JsonLoader: Saved {fileName} at {path}");
     }
 }
+
+// ================================
+// File: Scripts/Core/JsonLoader.cs
+// Purpose: Generic JSON load/save helper
+// ================================

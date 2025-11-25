@@ -8,3 +8,8 @@ public static class AppConfig
 
     // Add more global settings here if needed
 }
+
+// ================================
+// File: Scripts/Core/AppConfig.cs
+// Purpose: Global app settings
+// ================================

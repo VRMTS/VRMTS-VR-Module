@@ -1,0 +1,54 @@
+using UnityEngine;
+
+public static class UserHelpers
+{
+    // Add or update a key-value in UserMetaData (stored as JSON string)
+    public static void UpdateUserMeta(UserData user, string key, string value)
+    {
+        var dict = new System.Collections.Generic.Dictionary<string, string>();
+
+        if (!string.IsNullOrEmpty(user.UserMetaData))
+        {
+            dict = JsonUtility.FromJson<SerializationWrapper>(user.UserMetaData).ToDictionary();
+        }
+
+        dict[key] = value;
+
+        user.UserMetaData = JsonUtility.ToJson(new SerializationWrapper(dict), true);
+    }
+}
+
+// Simple wrapper for Unity JsonUtility
+[System.Serializable]
+public class SerializationWrapper
+{
+    public KeyValuePair[] items;
+
+    public SerializationWrapper(System.Collections.Generic.Dictionary<string, string> dict)
+    {
+        items = new KeyValuePair[dict.Count];
+        int i = 0;
+        foreach (var kvp in dict)
+        {
+            items[i] = new KeyValuePair { Key = kvp.Key, Value = kvp.Value };
+            i++;
+        }
+    }
+
+    public System.Collections.Generic.Dictionary<string, string> ToDictionary()
+    {
+        var dict = new System.Collections.Generic.Dictionary<string, string>();
+        foreach (var kvp in items)
+        {
+            dict[kvp.Key] = kvp.Value;
+        }
+        return dict;
+    }
+}
+
+[System.Serializable]
+public class KeyValuePair
+{
+    public string Key;
+    public string Value;
+}

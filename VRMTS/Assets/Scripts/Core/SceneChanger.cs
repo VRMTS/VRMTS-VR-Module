@@ -33,3 +33,8 @@ public class SceneChanger : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
+
+// ================================
+// File: Scripts/Core/SceneChanger.cs
+// Purpose: Switch scenes, singleton
+// ================================

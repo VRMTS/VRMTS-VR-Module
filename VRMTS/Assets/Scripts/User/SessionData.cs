@@ -1,18 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+// ================================
+// File: Scripts/User/SessionData.cs
+// Purpose: Tracks current session
+// ================================
+using System;
 
-public class SessionData : MonoBehaviour
+[Serializable]
+public class SessionData
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public string SessionId;
+    public string StartTime;       // ISO 8601 string
+    public string EndTime;         // ISO 8601 string
+    public string CurrentModule;   // Active module
+    public string SessionSummary;  // LLM-friendly summary
 
-    // Update is called once per frame
-    void Update()
+    public SessionData()
     {
-        
+        SessionId = Guid.NewGuid().ToString();
+        StartTime = DateTime.UtcNow.ToString("o");
+        EndTime = null;
+        CurrentModule = "";
+        SessionSummary = "";
     }
 }

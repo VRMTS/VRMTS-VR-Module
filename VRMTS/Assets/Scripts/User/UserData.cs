@@ -1,26 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+// ================================
+// File: Scripts/User/UserData.cs
+// Purpose: Stores user info, LLM/feedback ready
+// ================================
+using System;
 
-public class UserData : MonoBehaviour
+[Serializable]
+public class UserData
 {
-    // Start is called before the first frame update
+    public string UserId;
+    public string UserName;
 
-    //basic data of user
-    private string userName;
-    private string password;
-    
-    private int ModuleProgress;
+    public string UserMetaData;       // JSON string for dynamic metadata
+    public string UserPerformanceData;// JSON string for performance stats
+    public string FeedbackData;       // Feedback from AI/LLM
 
-
-    void Start()
+    public UserData()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        UserId = Guid.NewGuid().ToString();
+        UserName = "Player";
+        UserMetaData = "{}";
+        UserPerformanceData = "{}";
+        FeedbackData = "";
     }
 }
