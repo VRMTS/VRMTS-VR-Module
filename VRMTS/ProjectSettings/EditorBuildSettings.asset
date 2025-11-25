@@ -11,13 +11,13 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/lab2.unity
     guid: 2bff76ea5942f504aa08ca6e157cd375
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/MainMenu.unity
     guid: 2be99283886a2914e84d57f4a2a03dfe
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/learning.unity
     guid: 79d033d7e2982a1429b9a26c20584879
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/lab 1.unity
     guid: 19df7851ef50c9f4583a2eb82f30bc35
   - enabled: 0

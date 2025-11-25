@@ -5,6 +5,14 @@ using UnityEngine;
 public class UserData : MonoBehaviour
 {
     // Start is called before the first frame update
+
+    //basic data of user
+    private string userName;
+    private string password;
+    
+    private int ModuleProgress;
+
+
     void Start()
     {
         
