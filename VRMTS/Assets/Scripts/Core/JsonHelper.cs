@@ -1,7 +1,3 @@
-// ================================
-// File: Scripts/Core/JsonHelper.cs
-// Purpose: Unity-friendly dictionary -> JSON helper
-// ================================
 using System.Collections.Generic;
 using UnityEngine;
 
