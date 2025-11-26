@@ -2913,12 +2913,6 @@ MonoBehaviour:
     UserMetaData: '{}'
     UserPerformanceData: '{}'
     FeedbackData: 
-  CurrentSession:
-    SessionId: c900a5fb-7463-467e-8725-d0cd17be08fd
-    StartTime: 2025-11-25T09:21:44.2313566Z
-    EndTime: 
-    CurrentModule: 
-    SessionSummary: 
 --- !u!1 &2942222459930323037
 GameObject:
   m_ObjectHideFlags: 0
@@ -5439,7 +5433,7 @@ LineRenderer:
   m_Positions: []
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.02
+    widthMultiplier: 0.01
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -10614,7 +10608,7 @@ LineRenderer:
   m_Positions: []
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.02
+    widthMultiplier: 0.01
     widthCurve:
       serializedVersion: 2
       m_Curve:
