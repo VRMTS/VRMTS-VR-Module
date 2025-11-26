@@ -1,19 +1,25 @@
 // ================================
 // File: Scripts/User/UserManager.cs
-// Purpose: Singleton manager for user & session data
+// Purpose: Singleton manager for user data
+// Notes: Handles loading, saving, and updating metadata/performance/feedback
 // ================================
 using UnityEngine;
 using System;
 
+
+// ================================
+// File: UserManager.cs
+// Purpose: Singleton manager for user data
+// ================================
 public class UserManager : MonoBehaviour
 {
     public static UserManager Instance;
 
     public UserData CurrentUser;
-    public SessionData CurrentSession;
 
     private void Awake()
     {
+        // Singleton setup
         if (Instance != null && Instance != this)
         {
             Destroy(this.gameObject);
@@ -24,15 +30,15 @@ public class UserManager : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
 
         LoadUser();
-        StartSession();
     }
 
     // ---------------------------
-    // User management
+    // Load / Save user data
     // ---------------------------
-    private void LoadUser()
+    public void LoadUser()
     {
         CurrentUser = JsonLoader.Load<UserData>("user_data.json");
+
         if (CurrentUser == null)
         {
             CurrentUser = new UserData();
@@ -46,35 +52,20 @@ public class UserManager : MonoBehaviour
     }
 
     // ---------------------------
-    // Session management
+    // Helpers for metadata, performance, feedback
     // ---------------------------
-    private void StartSession()
+    public void UpdateUserMeta(string text)
     {
-        CurrentSession = new SessionData();
+        UserHelpers.UpdateUserMeta(CurrentUser, text);
     }
 
-    public void EndSession()
+    public void UpdatePerformanceData(string text)
     {
-        CurrentSession.EndTime = DateTime.UtcNow.ToString("o");
-        UpdateUserMeta("LastSessionSummary", CurrentSession.SessionSummary);
-        SaveUser();
+        UserHelpers.UpdatePerformanceData(CurrentUser, text);
     }
 
-    // ---------------------------
-    // Metadata helpers
-    // ---------------------------
-    public void UpdateUserMeta(string key, string value)
+    public void AddFeedback(string text)
     {
-        CurrentUser.UserMetaData = JsonHelper.UpdateJsonKey(CurrentUser.UserMetaData, key, value);
-    }
-
-    public void UpdatePerformanceData(string key, string value)
-    {
-        CurrentUser.UserPerformanceData = JsonHelper.UpdateJsonKey(CurrentUser.UserPerformanceData, key, value);
-    }
-
-    public void AddFeedback(string feedback)
-    {
-        CurrentUser.FeedbackData = feedback;
+        UserHelpers.AddFeedback(CurrentUser, text);
     }
 }
