@@ -1,4 +1,3 @@
-//"/Scripts/User/TestUserScripts/_TestOutputs/";
 using UnityEngine;
 using System.IO;
 
@@ -20,13 +19,30 @@ public class TestUserManager : MonoBehaviour
         var userManager = UserManager.Instance;
 
         // ---------------------------
-        // Print current user info
+        // Add some test tags
+        // ---------------------------
+        //userManager.AddTag("Anatomy");
+        //userManager.AddTag("Muscles");
+        //userManager.AddTag("Bones");
+
+        // ---------------------------
+        // Update some metadata / performance / feedback
+        // ---------------------------
+        //userManager.UpdateUserMeta("This guy likes motorcycles");
+        //userManager.UpdatePerformanceData("User lacks locking in");
+        //userManager.AddFeedback("Please lock tf in! You suck at anatomy");
+
+        userManager.SaveUser();
+
+        // ---------------------------
+        // Log current user info in console
         // ---------------------------
         Debug.Log("Current User ID: " + userManager.CurrentUser.UserId);
         Debug.Log("Current User Name: " + userManager.CurrentUser.UserName);
         Debug.Log("UserMetaData: " + userManager.CurrentUser.UserMetaData);
         Debug.Log("UserPerformanceData: " + userManager.CurrentUser.UserPerformanceData);
         Debug.Log("FeedbackData: " + userManager.CurrentUser.FeedbackData);
+        Debug.Log("Tags: " + string.Join(", ", userManager.CurrentUser.Tags));
 
         // ---------------------------
         // Save to TXT log
@@ -36,6 +52,7 @@ public class TestUserManager : MonoBehaviour
                          $"UserMetaData: {userManager.CurrentUser.UserMetaData}\n" +
                          $"UserPerformanceData: {userManager.CurrentUser.UserPerformanceData}\n" +
                          $"FeedbackData: {userManager.CurrentUser.FeedbackData}\n" +
+                         $"Tags: {string.Join(", ", userManager.CurrentUser.Tags)}\n" +
                          $"Time: {System.DateTime.Now}\n" +
                          "---------------------------\n";
 
@@ -51,14 +68,5 @@ public class TestUserManager : MonoBehaviour
 
         Debug.Log($"User data JSON saved: {jsonFile}");
         Debug.Log($"User log TXT updated: {logFile}");
-
-        // ---------------------------
-        // Optional: update some text fields for testing
-        // ---------------------------
-        userManager.UpdateUserMeta("This guy likes motorcycles");
-        userManager.UpdatePerformanceData("User lacks locking in");
-        userManager.AddFeedback("Please lock tf in! You suck at anatomy");
-
-        userManager.SaveUser();
     }
 }

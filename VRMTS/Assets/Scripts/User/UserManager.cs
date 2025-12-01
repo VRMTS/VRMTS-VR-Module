@@ -68,4 +68,23 @@ public class UserManager : MonoBehaviour
     {
         UserHelpers.AddFeedback(CurrentUser, text);
     }
+
+
+    // ---------------------------
+    // NEW: Tags Helpers
+    public void AddTag(string tag)
+    {
+        UserHelpers.AddTag(CurrentUser, tag);
+    }
+
+    public void RemoveTag(string tag)
+    {
+        UserHelpers.RemoveTag(CurrentUser, tag);
+    }
+
+    public void ClearTags()
+    {
+        UserHelpers.ClearTags(CurrentUser);
+    }
+
 }

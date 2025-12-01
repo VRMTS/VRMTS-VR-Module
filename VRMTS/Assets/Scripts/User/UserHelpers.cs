@@ -30,4 +30,24 @@ public static class UserHelpers
     {
         user.FeedbackData = text;
     }
+
+    // ------------------------
+    // NEW: Tags Helpers
+    // ------------------------
+    public static void AddTag(UserData user, string tag)
+    {
+        if (!user.Tags.Contains(tag))
+            user.Tags.Add(tag);
+    }
+
+    public static void RemoveTag(UserData user, string tag)
+    {
+        if (user.Tags.Contains(tag))
+            user.Tags.Remove(tag);
+    }
+
+    public static void ClearTags(UserData user)
+    {
+        user.Tags.Clear();
+    }
 }
