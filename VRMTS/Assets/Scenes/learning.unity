@@ -162117,19 +162117,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7516595476277194421, guid: 07a398e6051676840bde21152d9ba736, type: 3}
       propertyPath: CurrentUser.Tags.Array.size
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7516595476277194421, guid: 07a398e6051676840bde21152d9ba736, type: 3}
       propertyPath: CurrentUser.Tags.Array.data[0]
-      value: sagittal
-      objectReference: {fileID: 0}
-    - target: {fileID: 7516595476277194421, guid: 07a398e6051676840bde21152d9ba736, type: 3}
-      propertyPath: CurrentUser.Tags.Array.data[1]
       value: coronal
       objectReference: {fileID: 0}
     - target: {fileID: 7516595476277194421, guid: 07a398e6051676840bde21152d9ba736, type: 3}
-      propertyPath: CurrentUser.Tags.Array.data[2]
+      propertyPath: CurrentUser.Tags.Array.data[1]
       value: medial
+      objectReference: {fileID: 0}
+    - target: {fileID: 7516595476277194421, guid: 07a398e6051676840bde21152d9ba736, type: 3}
+      propertyPath: CurrentUser.Tags.Array.data[2]
+      value: sagittal
       objectReference: {fileID: 0}
     - target: {fileID: 7516595476277194421, guid: 07a398e6051676840bde21152d9ba736, type: 3}
       propertyPath: CurrentUser.UserPerformanceData

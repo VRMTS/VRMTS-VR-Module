@@ -33,9 +33,10 @@ public class SceneChanger : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    public void LoadTestScene( int testnumber)
+    public void LoadTestScene( string selectedLabX)
     {
-        //SceneManager.LoadScene("TestScene");
+        SelectedLab.selectedLab = selectedLabX;
+        SceneManager.LoadScene("TestScene");
         //add call to test generator with testnumber
     }
 }

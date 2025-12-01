@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "question": "Which plane divides the body into left and right sections?",
+    "options": ["Sagittal Plane", "Transverse Plane", "Frontal Plane", "Oblique Plane"],
+    "correctIndex": 0,
+    "tag": "Sagittal"
+  },
+  {
+    "id": 2,
+    "question": "Which plane divides the body into anterior and posterior portions?",
+    "options": ["Frontal Plane", "Sagittal Plane", "Median Plane", "Coronal Plane"],
+    "correctIndex": 3,
+    "tag": "Coronal"
+  },
+  {
+    "id": 3,
+    "question": "The transverse plane separates the body into:",
+    "options": ["Superior & Inferior", "Left & Right", "Anterior & Posterior", "Deep & Superficial"],
+    "correctIndex": 0,
+    "tag": "Transverse"
+  },
+  {
+    "id": 4,
+    "question": "Which plane passes exactly through the midline of the body?",
+    "options": ["Midsagittal", "Parasagittal", "Horizontal", "Oblique"],
+    "correctIndex": 0,
+    "tag": "MidSagittal"
+  },
+  {
+    "id": 5,
+    "question": "Oblique plane divides the body:",
+    "options": ["At an angle", "Superior-Inferior", "Anterior-Posterior", "Left-Right"],
+    "correctIndex": 0,
+    "tag": "Oblique"
+  },
+  {
+    "id": 6,
+    "question": "Which plane is used to take cross-sectional images in CT scans?",
+    "options": ["Transverse", "Sagittal", "Coronal", "Frontal"],
+    "correctIndex": 0,
+    "tag": "MedicalScan"
+  },
+  {
+    "id": 7,
+    "question": "A parasagittal plane divides the body:",
+    "options": ["Unequal left & right", "Directly equal left & right", "Anterior & Posterior", "None"],
+    "correctIndex": 0,
+    "tag": "Sagittal"
+  },
+  {
+    "id": 8,
+    "question": "Which plane is often used to study walking gait?",
+    "options": ["Sagittal", "Transverse", "Coronal", "Oblique"],
+    "correctIndex": 0,
+    "tag": "Biomechanics"
+  },
+  {
+    "id": 9,
+    "question": "The frontal plane is also referred to as ______ plane.",
+    "options": ["Coronal", "Axial", "Transverse", "Cross-sectional"],
+    "correctIndex": 0,
+    "tag": "Coronal"
+  },
+  {
+    "id": 10,
+    "question": "Which plane would best show both kidneys at the same time?",
+    "options": ["Transverse", "Coronal", "Sagittal", "Oblique"],
+    "correctIndex": 1,
+    "tag": "Coronal"
+  }
+]

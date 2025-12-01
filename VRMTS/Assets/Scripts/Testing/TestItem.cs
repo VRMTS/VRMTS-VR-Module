@@ -1,18 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
-public class TestItem : MonoBehaviour
+[Serializable]
+public class TestItem
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public int id;
+    public string question;
+    public string[] options;
+    public int correctIndex;
+    public string tag;
 }
