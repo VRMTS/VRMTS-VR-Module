@@ -6,8 +6,13 @@ public class MainMenuManager : MonoBehaviour
 {
     [Header("Canvas References")]
     public CanvasGroup loginCanvas;
-    public CanvasGroup moduleCanvas;
-    public CanvasGroup userCanvas;
+    public CanvasGroup moduleCanvas;   // main menu pair
+    public CanvasGroup userCanvas;     // main menu pair
+    public CanvasGroup selectTestCanvas;
+    public CanvasGroup settingsCanvas;
+    public CanvasGroup analyticsCanvas;
+
+    private CanvasGroup currentScreen;
 
     [Header("Audio")]
     public AudioSource audioSource;
@@ -15,7 +20,7 @@ public class MainMenuManager : MonoBehaviour
     public AudioClip introClip;
 
     [Header("Settings")]
-    public float fadeDuration = 1.5f;
+    public float fadeDuration = 0.5f;
     public float rotationSpeed = 1.0f;
 
     private bool hasPlayedIntro = false;
@@ -23,85 +28,150 @@ public class MainMenuManager : MonoBehaviour
 
     void Start()
     {
-        // Initialize states
-        moduleCanvas.alpha = 0f;
-        moduleCanvas.gameObject.SetActive(false);
-        userCanvas.alpha = 0f;
-        userCanvas.gameObject.SetActive(false);
+        HideAllScreens();
 
         if (!hasSeenLoginThisSession)
-        {
-            // First time this session - show login canvas and play welcome audio
-            loginCanvas.alpha = 0f;
-            loginCanvas.gameObject.SetActive(true);
-            if (welcomeClip != null && audioSource != null)
-            {
-                audioSource.PlayOneShot(welcomeClip);
-            }
-            StartCoroutine(FadeCanvas(loginCanvas, 0f, 1f, fadeDuration));
-        }
+            Login();
         else
-        {
-            // Already seen login this session - go straight to main view
-            loginCanvas.gameObject.SetActive(false);
-            moduleCanvas.gameObject.SetActive(true);
-            userCanvas.gameObject.SetActive(true);
-            moduleCanvas.alpha = 1f;
-            userCanvas.alpha = 1f;
-        }
+            ShowMainMenu();
     }
 
     void Update()
     {
-        // Rotate skybox
         RenderSettings.skybox.SetFloat("_Rotation", Time.time * rotationSpeed);
     }
 
-    public void OnLoginButtonClicked()
+    // ============================
+    // SCREEN CONTROL
+    // ============================
+    private void HideAllScreens()
     {
-        if (!hasPlayedIntro)
+        CanvasGroup[] all = { loginCanvas, moduleCanvas, userCanvas, selectTestCanvas, settingsCanvas, analyticsCanvas };
+        foreach (var cg in all)
         {
-            hasPlayedIntro = true;
-            hasSeenLoginThisSession = true;
-            StartCoroutine(TransitionToMain());
+            cg.alpha = 0f;
+            cg.gameObject.SetActive(false);
         }
+        currentScreen = null;
     }
 
-    private IEnumerator TransitionToMain()
+    private void ShowMainMenu()
     {
-        // Fade out login
-        yield return StartCoroutine(FadeCanvas(loginCanvas, 1f, 0f, fadeDuration));
-        loginCanvas.gameObject.SetActive(false);
-
-        // Fade in module + user
         moduleCanvas.gameObject.SetActive(true);
         userCanvas.gameObject.SetActive(true);
-
-        yield return StartCoroutine(FadeCanvas(moduleCanvas, 0f, 1f, fadeDuration));
-        yield return StartCoroutine(FadeCanvas(userCanvas, 0f, 1f, fadeDuration));
-
-        // Play audios once
-        //if (welcomeClip != null && audioSource != null)
-        //{
-            //audioSource.PlayOneShot(welcomeClip);
-           // yield return new WaitForSeconds(welcomeClip.length + 0.5f);
-        //}
-
-        if (introClip != null && audioSource != null)
-        {
-            audioSource.PlayOneShot(introClip);
-        }
+        FadeIn(moduleCanvas);
+        FadeIn(userCanvas);
+        currentScreen = moduleCanvas; // reference one of the main menu screens
     }
 
-    private IEnumerator FadeCanvas(CanvasGroup canvas, float start, float end, float duration)
+    // ============================
+    // LOGIN / LOGOUT
+    // ============================
+    public void Login()
     {
+        loginCanvas.gameObject.SetActive(true);
+        FadeIn(loginCanvas);
+        currentScreen = loginCanvas;
+
+        if (!hasPlayedIntro && audioSource != null && welcomeClip != null)
+            audioSource.PlayOneShot(welcomeClip);
+
+        hasSeenLoginThisSession = true;
+    }
+
+    public void Logout()
+    {
+        FadeOut(currentScreen);
+        FadeOut(moduleCanvas);
+        FadeOut(userCanvas);
+        Login();
+    }
+
+    // ============================
+    // LOAD / EXIT SCREENS
+    // ============================
+    public void LoadScreen(CanvasGroup screen)
+    {
+        if (screen == moduleCanvas || screen == userCanvas)
+        {
+            FadeOut(currentScreen);
+            ShowMainMenu();
+            return;
+        }
+
+        // fade out main menu pair
+        FadeOut(moduleCanvas);
+        FadeOut(userCanvas);
+
+        // fade in new screen
+        screen.gameObject.SetActive(true);
+        FadeIn(screen);
+        currentScreen = screen;
+    }
+
+    public void ReturnToMainMenu()
+    {
+        // fade out current screen
+        if (currentScreen != null && currentScreen != moduleCanvas && currentScreen != userCanvas)
+            FadeOut(currentScreen);
+
+        // fade in main menu pair
+        ShowMainMenu();
+    }
+
+    // ============================
+    // FADE HELPERS
+    // ============================
+    private void FadeIn(CanvasGroup canvas)
+    {
+        //canvas.alpha = 1f;
+        //canvas.gameObject.SetActive(true);
+        StartCoroutine(FadeIn_routine(canvas, fadeDuration));
+    }
+
+    private void FadeOut(CanvasGroup canvas)
+    {
+        //canvas.alpha = 0f;
+        //canvas.gameObject.SetActive(false);
+        StartCoroutine(FadeOut_routine(canvas, fadeDuration));
+    }
+
+    private IEnumerator FadeIn_routine(CanvasGroup canvas, float duration)
+    {
+        canvas.gameObject.SetActive(true);
         float elapsed = 0f;
         while (elapsed < duration)
         {
-            canvas.alpha = Mathf.Lerp(start, end, elapsed / duration);
+            canvas.alpha = Mathf.Lerp(0f, 1f, elapsed / duration);
             elapsed += Time.deltaTime;
             yield return null;
         }
-        canvas.alpha = end;
+        canvas.alpha = 1f; // ensure fully visible at the end
+        canvas.gameObject.SetActive(true);
+    }
+
+    private IEnumerator FadeOut_routine(CanvasGroup canvas, float duration)
+    {
+        float elapsed = 0f;
+        float startAlpha = canvas.alpha;
+        while (elapsed < duration)
+        {
+            canvas.alpha = Mathf.Lerp(startAlpha, 0f, elapsed / duration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        canvas.alpha = 0f;
+        canvas.gameObject.SetActive(false); // hide after fade
+    }
+
+    // ============================
+    // QUIT
+    // ============================
+    public void ExitApplication()
+    {
+        Application.Quit();
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+        #endif
     }
 }

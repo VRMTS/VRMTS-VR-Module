@@ -9,7 +9,7 @@ public class ContentLocking : MonoBehaviour
     private Button[] moduleButtons;  // Array to hold all module buttons
 
     private const string PROGRESS_KEY = "ModuleProgress";
-    private const int INITIAL_UNLOCKED_MODULES = 2;
+    private const int INITIAL_UNLOCKED_MODULES = 1;
 
     void Start()
     {
