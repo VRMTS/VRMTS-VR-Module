@@ -1,116 +1,120 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System.Linq;
 
-/// ==============================================
-/// TESTING MANAGER  
-/// Loads question bank → picks best questions
-/// Runs test → scores → updates tags → saves data
-/// ==============================================
 public class TestingManager : MonoBehaviour
 {
-    public string selectedLab;            // Set from Main Menu using static class SelectedLab
-    private List<TestItem> questionBank;  // Full list loaded from JSON
-    private List<TestItem> currentTest;   // Final selected test set
+    public string selectedLab = "lab1";  //for testing in editor
 
-    private int totalQuestions = 5;       // Default for Lab1 (others upscale automatically)
+    private List<TestItem> questionBank;
+    private List<TestItem> currentTest;
 
-    // ---------------------------------------------------------
-    // ENTRY POINT
-    // ---------------------------------------------------------
+    public UI_TestController uiTest;
+    private int totalQuestions = 5;
+    private int currentIndex = 0;
+
     void Start()
     {
-        selectedLab = SelectedLab.selectedLab;     // Get selected lab from menu
-        LoadLab();                                 // Load json questions
-        SelectBestQuestions();                     // Pick best fit for user
-        StartTest();                               // Begin test UI/flow
+        LoadLab();
+        SelectBestQuestions();
+        BindUI();
+        StartTest();
     }
 
+    // --------------------------------------------------------------
+    void BindUI()
+    {
+        uiTest.onAnswerSelected = OnAnswerSelected;
+        uiTest.onNextQuestion = OnNextQuestion;
+    }
 
-    // =========================================================
-    // LOAD QUESTION DATA FROM JSON
-    // =========================================================
+    // --------------------------------------------------------------
     void LoadLab()
     {
+        selectedLab = SelectedLabStatic.selectedLab; // from static class's var
         string path = Application.streamingAssetsPath + "/QuestionBanks/" + selectedLab + "_questions.json";
 
         if (!File.Exists(path))
         {
-            Debug.LogError("X >> X >> Question bank not found: " + path);
+            Debug.LogError("Question bank not found: " + path);
             return;
         }
 
         string json = File.ReadAllText(path);
         questionBank = JsonHelper.FromJson<TestItem>(json).ToList();
 
-        // Labs other than 1 use more questions automatically (your rule)
-        if (selectedLab != "lab1") 
+        if (selectedLab != "lab1")
             totalQuestions = 10;
 
-        Debug.Log(">> Loaded " + questionBank.Count + " questions for " + selectedLab);
+        Debug.Log("Loaded " + questionBank.Count + " questions");
     }
 
-
-    // =========================================================
-    // CHOOSE BEST QUESTIONS FOR USER BASED ON TAGS
-    // =========================================================
+    // --------------------------------------------------------------
     void SelectBestQuestions()
     {
-        List<string> userTags = UserManager.Instance.CurrentUser.Tags; // Raw tag list from user file
+        if (UserManager.Instance == null || UserManager.Instance.CurrentUser == null)
+        {
+            Debug.LogError("User data missing!");
+            currentTest = questionBank.Take(totalQuestions).ToList();
+            return;
+        }
 
-        // Sort questions → tags matching user appear first
+        List<string> tags = UserManager.Instance.CurrentUser.Tags ?? new List<string>();
+
         currentTest = questionBank
-            .OrderByDescending(q => userTags.Contains(q.tag)) // Priority if tag already exists
-            .ThenBy(q => Random.value)                       // Add randomness so variety stays
+            .OrderByDescending(q => tags.Contains(q.tag))
+            .ThenBy(q => Random.value)
             .Take(totalQuestions)
             .ToList();
-
-        Debug.Log(">> Selected " + currentTest.Count + " questions based on user profile");
     }
 
-
-    // =========================================================
-    // START TEST (UI HOOK HERE)
-    // =========================================================
+    // --------------------------------------------------------------
     void StartTest()
     {
-        Debug.Log(">> Test Started for " + selectedLab);
-        // TODO: -> Display Question #1 in UI or VR Panel
+        uiTest.InitUI();
+        ShowQuestion(0);
     }
 
+    // --------------------------------------------------------------
+    void ShowQuestion(int index)
+    {
+        currentIndex = index;
+        var q = currentTest[index];
+        uiTest.DisplayQuestion(q, index, currentTest.Count);
+    }
 
-    // =========================================================
-    // SUBMIT ANSWER & UPDATE USER PROFILE
-    // =========================================================
-    public void SubmitAnswer(int questionIndex, int chosenIndex)
+    // --------------------------------------------------------------
+    // When the UI reports user's answer:
+    // --------------------------------------------------------------
+    void OnAnswerSelected(int questionIndex, int chosenIndex)
     {
         var q = currentTest[questionIndex];
 
-        if (chosenIndex == q.correctIndex)
-        {
-            Debug.Log("✔ Correct → `" + q.tag + "` stays or gets reinforced");
-            UserManager.Instance.AddTag(q.tag); // You already have this function
-        }
-        else
-        {
-            Debug.Log("X Wrong → Added tag to focus `" + q.tag + "` next time");
-            UserManager.Instance.AddTag(q.tag);
-        }
+        bool isCorrect = (chosenIndex == q.correctIndex);
 
-        UserManager.Instance.SaveUser(); // Save updated user_data.json
+        if (isCorrect)
+            UserManager.Instance.AddTag(q.tag);
+        else
+            UserManager.Instance.AddTag(q.tag);
+
+        UserManager.Instance.SaveUser();
+
+        // Tell UI which option was correct
+        uiTest.MarkOptions(q.correctIndex);
     }
 
-
-    // =========================================================
-    // SAVE TEST SCORE (OPTIONAL)
-    // =========================================================
-    void SavePerformance()
+    // --------------------------------------------------------------
+    void OnNextQuestion()
     {
-        string savePath = Application.persistentDataPath + "/userPerformance.json";
-        File.WriteAllText(savePath, JsonUtility.ToJson(UserManager.Instance.CurrentUser, true));
+        currentIndex++;
 
-        Debug.Log(">> Saved performance data to: " + savePath);
+        if (currentIndex >= currentTest.Count)
+        {
+            uiTest.ShowEndPanel();
+            return;
+        }
+
+        ShowQuestion(currentIndex);
     }
 }

@@ -15,7 +15,7 @@ public class UserData
     public string UserPerformanceData; // JSON string for performance stats
     public string FeedbackData;        // Feedback from AI/LLM
 
-    public List<string> Tags;          // NEW: tracks areas that need improvement
+    public List<string> Tags = new List<string>(); // NEW: tracks areas that need improvement
 
     public UserData()
     {
