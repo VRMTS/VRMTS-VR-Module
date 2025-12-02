@@ -35,7 +35,7 @@ public class TestingManager : MonoBehaviour
     }
 
     // --------------------------------------------------------------
-    void LoadLab()
+    /*void LoadLab()
     {
         selectedLab = SelectedLabStatic.selectedLab; // from static class's var
         string path = Application.streamingAssetsPath + "/QuestionBanks/" + selectedLab + "_questions.json";
@@ -53,7 +53,54 @@ public class TestingManager : MonoBehaviour
             totalQuestions = 10;
 
         Debug.Log("Loaded " + questionBank.Count + " questions");
+    }*/
+
+    void LoadLab()
+    {
+        selectedLab = SelectedLabStatic.selectedLab;
+
+        string persistentDir = Path.Combine(Application.persistentDataPath, "QuestionBanks");
+        if (!Directory.Exists(persistentDir))
+            Directory.CreateDirectory(persistentDir);
+
+        string persistentPath = Path.Combine(persistentDir, selectedLab + "_questions.json");
+
+        if (!File.Exists(persistentPath))
+        {
+            string streamingPath = Path.Combine(Application.streamingAssetsPath, "QuestionBanks/" + selectedLab + "_questions.json");
+            string json = "";
+
+        #if UNITY_ANDROID && !UNITY_EDITOR
+                // StreamingAssets on Android/Quest requires UnityWebRequest
+                var request = UnityEngine.Networking.UnityWebRequest.Get(streamingPath);
+                var op = request.SendWebRequest();
+                while (!op.isDone) { } // block (synchronous)
+                if (request.result != UnityEngine.Networking.UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError("Failed to copy JSON from StreamingAssets: " + request.error);
+                    return;
+                }
+                json = request.downloadHandler.text;
+        #else
+                // Editor / PC / Standalone
+                json = File.ReadAllText(streamingPath);
+        #endif
+
+            File.WriteAllText(persistentPath, json); // save to persistent for future synchronous reads
+        }
+
+        // Now read synchronously from persistent
+        string jsonData = File.ReadAllText(persistentPath);
+        questionBank = JsonHelper.FromJson<TestItem>(jsonData).ToList();
+
+        if (selectedLab != "lab1")
+            totalQuestions = 10;
+
+        Debug.Log("Loaded " + questionBank.Count + " questions from " + persistentPath);
     }
+
+
+
 
     // --------------------------------------------------------------
     void SelectBestQuestions()
@@ -135,9 +182,8 @@ public class TestingManager : MonoBehaviour
 
         if (currentIndex >= currentTest.Count) // test is over
         {
-
-            string performanceSummary = GetPerformanceSummary();
             FinishTest();
+            string performanceSummary = GetPerformanceSummary();
             uiTest.ShowEndPanel(performanceSummary);
             return;
         }
@@ -168,7 +214,7 @@ public class TestingManager : MonoBehaviour
         // DEBUG / TESTING OUTPUT (Readable Summary)
         // ------------------------------------------------------------
 
-        // Create a folder in project root for visible files
+        /*// Create a folder in project root for visible files
         string debugDir = Application.dataPath + "/..Scripts/Testing/Testing_output_logs/";
         if (!Directory.Exists(debugDir))
             Directory.CreateDirectory(debugDir);
@@ -189,7 +235,7 @@ public class TestingManager : MonoBehaviour
 
         File.WriteAllText(summaryTextPath, readableSummary);
 
-        Debug.Log("Debug summary written to: " + summaryTextPath);
+        Debug.Log("Debug summary written to: " + summaryTextPath);*/
     }
 
 
