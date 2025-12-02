@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class FeedbackManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public static FeedbackManager Instance;
+
+    void Awake()
     {
-        
+        Instance ??= this;
     }
 
-    // Update is called once per frame
-    void Update()
+    public string GenerateAdaptiveFeedback(TestResult result)
     {
-        
+        return "AI feedback module is under development.\n(Your performance will be analyzed here.)";
     }
 }

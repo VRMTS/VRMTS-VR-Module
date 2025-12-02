@@ -2,17 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DBupdater : MonoBehaviour
+public class DBUpdater : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public static DBUpdater Instance;
+
+    void Awake()
     {
-        
+        Instance ??= this;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void UploadTestResult(TestResult result)
     {
-        
+        Debug.Log("DB Upload Placeholder → This will sync with server later.");
     }
 }

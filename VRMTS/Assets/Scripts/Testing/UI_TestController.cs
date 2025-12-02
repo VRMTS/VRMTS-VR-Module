@@ -8,9 +8,11 @@ public class UI_TestController : MonoBehaviour
     [Header("UI Elements")]
     public TMP_Text questionText;
     public TMP_Text progressText;
+    public TMP_Text performanceText;
 
     public Button[] optionButtons;   // 4 buttons
     public Button nextButton;
+    public Button ExitButton;
 
     private int currentIndex = 0;
     private bool answered = false;
@@ -21,6 +23,8 @@ public class UI_TestController : MonoBehaviour
 
     public void InitUI()
     {
+        ExitButton.gameObject.SetActive(false);
+        performanceText.gameObject.SetActive(false);
         nextButton.interactable = false;
         nextButton.onClick.RemoveAllListeners();
         nextButton.onClick.AddListener(() => {
@@ -84,11 +88,15 @@ public class UI_TestController : MonoBehaviour
     // --------------------------------------------------------------
     // END SCREEN
     // --------------------------------------------------------------
-    public void ShowEndPanel()
+    public void ShowEndPanel(string performanceSummary)
     {
         questionText.text = "Test Completed!";
-        progressText.text = "";
+        progressText.text = "all questions answered...";
+        performanceText.text = performanceSummary;
+        performanceText.gameObject.SetActive(true);
 
+
+        ExitButton.gameObject.SetActive(true);
         nextButton.gameObject.SetActive(false);
 
         foreach (var b in optionButtons)
