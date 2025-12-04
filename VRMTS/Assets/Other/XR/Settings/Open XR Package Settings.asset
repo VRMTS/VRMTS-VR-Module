@@ -33,7 +33,7 @@ MonoBehaviour:
   m_Name: iPhone
   m_EditorClassIdentifier: 
   features:
-  - {fileID: 6729605399783751553}
+  - {fileID: 3172154885301893854}
   m_renderMode: 1
   m_latencyOptimization: 0
   m_autoColorSubmissionMode: 1
@@ -13699,7 +13699,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f928d0d73a35f294fbe357ca17aa3547, type: 3}
   m_Name: MicrosoftHandInteraction Android
   m_EditorClassIdentifier: 
-  m_enabled: 0
+  m_enabled: 1
   nameUi: Microsoft Hand Interaction Profile
   version: 0.0.1
   featureIdInternal: com.unity.openxr.feature.input.handtracking
@@ -15571,7 +15571,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4b862ee14fb479fbfe5fffe655d3ed3, type: 3}
   m_Name: MetaQuestTouchProControllerProfile Android
   m_EditorClassIdentifier: 
-  m_enabled: 0
+  m_enabled: 1
   nameUi: Meta Quest Touch Pro Controller Profile
   version: 0.0.1
   featureIdInternal: com.unity.openxr.feature.input.metaquestpro
@@ -19879,7 +19879,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7de993716e042c6499d0c18eed3a773c, type: 3}
   m_Name: MockRuntime Android
   m_EditorClassIdentifier: 
-  m_enabled: 0
+  m_enabled: 1
   nameUi: Mock Runtime
   version: 0.0.2
   featureIdInternal: com.unity.openxr.feature.mockruntime
@@ -25683,26 +25683,26 @@ MonoBehaviour:
   m_Name: Standalone
   m_EditorClassIdentifier: 
   features:
-  - {fileID: 6595543337268826425}
-  - {fileID: 7145220901461365616}
-  - {fileID: 5374081265402268335}
-  - {fileID: -5842622591735485032}
-  - {fileID: 8171352595334758170}
-  - {fileID: 4461663569075352800}
-  - {fileID: -8645842519334775648}
-  - {fileID: -5377061247104477955}
-  - {fileID: 2297783327209194659}
-  - {fileID: -4133021741741200786}
-  - {fileID: 578638620205276193}
-  - {fileID: -2294272868711653582}
-  - {fileID: 61347388004577850}
-  - {fileID: -5387352980598349599}
-  - {fileID: -8895518590110429109}
-  - {fileID: -1772994128080882533}
-  - {fileID: -4443694083550391854}
-  - {fileID: -7067579566501494282}
-  - {fileID: -3689873053011674455}
-  - {fileID: 3281131135621569798}
+  - {fileID: 4481949272868526956}
+  - {fileID: 1177291964951701850}
+  - {fileID: -7059299663938812547}
+  - {fileID: 2469648871006671468}
+  - {fileID: 7858339277353859638}
+  - {fileID: -3916800404725219304}
+  - {fileID: -4009110206508042878}
+  - {fileID: 5809515852051227197}
+  - {fileID: 5924799093186988031}
+  - {fileID: -4730346535834003313}
+  - {fileID: 5241124344628697181}
+  - {fileID: 8546278270136877008}
+  - {fileID: -448367554044742918}
+  - {fileID: 3714936400213367735}
+  - {fileID: -4210454348080655101}
+  - {fileID: 8522967240728598783}
+  - {fileID: -9012067456359911193}
+  - {fileID: 4765559019482735450}
+  - {fileID: -2931867846797207057}
+  - {fileID: -8145414799228693854}
   m_renderMode: 1
   m_latencyOptimization: 0
   m_autoColorSubmissionMode: 1
@@ -25724,7 +25724,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f647cc0545697264a9878224faada6d5, type: 3}
   m_Name: MetaQuestFeature Android
   m_EditorClassIdentifier: 
-  m_enabled: 0
+  m_enabled: 1
   nameUi: Meta Quest Support
   version: 1.0.0
   featureIdInternal: com.unity.openxr.feature.metaquest
@@ -31223,7 +31223,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3aced3429e5911458f4da2dac9d0f29, type: 3}
   m_Name: MetaHandTrackingAim Android
   m_EditorClassIdentifier: 
-  m_enabled: 0
+  m_enabled: 1
   nameUi: Meta Hand Tracking Aim
   version: 0.0.1
   featureIdInternal: com.unity.openxr.feature.input.metahandtrackingaim
@@ -38748,24 +38748,24 @@ MonoBehaviour:
   m_Name: Android
   m_EditorClassIdentifier: 
   features:
-  - {fileID: 1232339108725273112}
-  - {fileID: 7989206857668076174}
-  - {fileID: 2798908016657586145}
-  - {fileID: 2352080262930562644}
-  - {fileID: 2538497386313343836}
-  - {fileID: -1100475760035334878}
-  - {fileID: -9060853283357637186}
-  - {fileID: -9195884152283772644}
-  - {fileID: -8444310204803097776}
-  - {fileID: 8508956560683064789}
-  - {fileID: -6702113575437934688}
-  - {fileID: -4472599449084921244}
-  - {fileID: -4765861697680570930}
-  - {fileID: 7911600901857955228}
-  - {fileID: 2017667975265780514}
-  - {fileID: -7613438369262068979}
-  - {fileID: 6768307979268607834}
-  - {fileID: -8294089695187572983}
+  - {fileID: 1065625126077535128}
+  - {fileID: -323184630747193922}
+  - {fileID: -4342684520848341066}
+  - {fileID: 1486088627187778133}
+  - {fileID: 657031531495444837}
+  - {fileID: 1020793699144266016}
+  - {fileID: -1762328209844680370}
+  - {fileID: -3152494975455299006}
+  - {fileID: 5887870678654650668}
+  - {fileID: -5531154571343775618}
+  - {fileID: -5960686074647958411}
+  - {fileID: -4536028501874134193}
+  - {fileID: 5046312415309484221}
+  - {fileID: -8269116847780705746}
+  - {fileID: 8027142615671673247}
+  - {fileID: -8854066839164516783}
+  - {fileID: 8215653808632268316}
+  - {fileID: -7557925395711370410}
   m_renderMode: 1
   m_latencyOptimization: 1
   m_autoColorSubmissionMode: 1
@@ -57763,24 +57763,24 @@ MonoBehaviour:
   m_Name: WSA
   m_EditorClassIdentifier: 
   features:
-  - {fileID: -3391049860469722697}
-  - {fileID: 7618721813879629913}
-  - {fileID: -2677557610966591551}
-  - {fileID: -6924066426180953179}
-  - {fileID: 2981198022710410852}
-  - {fileID: -1590455559312736236}
-  - {fileID: -484525313972288008}
-  - {fileID: -4099575928033475392}
-  - {fileID: 2933067507407933323}
-  - {fileID: -4629203410941463}
-  - {fileID: -4449503176371217284}
-  - {fileID: 3826648375598890406}
-  - {fileID: 1935490897292861440}
-  - {fileID: 4161643750344884596}
-  - {fileID: 3374318696798428443}
-  - {fileID: 8475044710049171564}
-  - {fileID: 1458255347854162193}
-  - {fileID: 3197662989182644906}
+  - {fileID: 5450499042402482567}
+  - {fileID: 4546875174617971386}
+  - {fileID: 4257932400414091748}
+  - {fileID: -1087210697960281241}
+  - {fileID: 938277986826603060}
+  - {fileID: 9147049994685045676}
+  - {fileID: 56418877580675711}
+  - {fileID: 4462985828707929053}
+  - {fileID: 1661702480010478276}
+  - {fileID: -5979028305413703153}
+  - {fileID: 7555535068780065882}
+  - {fileID: 5192060590460831628}
+  - {fileID: -5651246417428028466}
+  - {fileID: 6130275383998407504}
+  - {fileID: 2784417759141633282}
+  - {fileID: -7673407885038483230}
+  - {fileID: 6583878547834234009}
+  - {fileID: 7989607500335055421}
   m_renderMode: 1
   m_latencyOptimization: 0
   m_autoColorSubmissionMode: 1
@@ -64606,7 +64606,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b7365b139f7aec43b23d26b7a48b5a6, type: 3}
   m_Name: MetaQuestTouchPlusControllerProfile Android
   m_EditorClassIdentifier: 
-  m_enabled: 0
+  m_enabled: 1
   nameUi: Meta Quest Touch Plus Controller Profile
   version: 0.0.1
   featureIdInternal: com.unity.openxr.feature.input.metaquestplus

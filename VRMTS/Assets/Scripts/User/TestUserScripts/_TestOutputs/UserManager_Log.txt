@@ -1,27 +1,17 @@
 User ID: b96dc943-9b21-4a9a-9c92-4508e6f3e777
 User Name: Player
-UserMetaData: {
+UserMetaData:
+{
     "items": [
-        {
-            "Key": "LastLogin",
-            "Value": "11/26/2025 9:27:27 AM"
-        },
-        {
-            "Key": "LastTestRun",
-            "Value": "11/26/2025 2:35:13 PM"
-        }
+        { "Key": "LastLogin", "Value": "11/26/2025 9:27:27 AM" },
+        { "Key": "LastTestRun", "Value": "11/26/2025 2:35:13 PM" }
     ]
 }
-UserPerformanceData: {
+UserPerformanceData:
+{
     "items": [
-        {
-            "Key": "HighScore",
-            "Value": "42"
-        },
-        {
-            "Key": "TestScore",
-            "Value": "99"
-        }
+        { "Key": "HighScore", "Value": "42" },
+        { "Key": "TestScore", "Value": "99" }
     ]
 }
 FeedbackData: Automated test run.
@@ -29,52 +19,52 @@ Time: 11/26/2025 2:42:46 PM
 ---------------------------
 User ID: b96dc943-9b21-4a9a-9c92-4508e6f3e777
 User Name: Player
-UserMetaData: This guy likes motorcycles
-UserPerformanceData: User lacks locking in
-FeedbackData: Please lock tf in! You suck at anatomy
+UserMetaData: This user likes motorcycles
+UserPerformanceData: User lacks focus
+FeedbackData: Please focus on anatomy
 Time: 11/26/2025 2:46:41 PM
 ---------------------------
 User ID: b96dc943-9b21-4a9a-9c92-4508e6f3e777
 User Name: Player
-UserMetaData: This guy likes motorcycles
-UserPerformanceData: User lacks locking in
-FeedbackData: Please lock tf in! You suck at anatomy
+UserMetaData: This user likes motorcycles
+UserPerformanceData: User lacks focus
+FeedbackData: Please focus on anatomy
 Time: 11/26/2025 6:04:48 PM
 ---------------------------
 User ID: b96dc943-9b21-4a9a-9c92-4508e6f3e777
 User Name: Player
-UserMetaData: This guy likes motorcycles
-UserPerformanceData: User lacks locking in
-FeedbackData: Please lock tf in! You suck at anatomy
+UserMetaData: This user likes motorcycles
+UserPerformanceData: User lacks focus
+FeedbackData: Please focus on anatomy
 Time: 12/1/2025 5:58:50 PM
 ---------------------------
 User ID: b96dc943-9b21-4a9a-9c92-4508e6f3e777
 User Name: Player
-UserMetaData: This guy likes motorcycles
-UserPerformanceData: User lacks locking in
-FeedbackData: Please lock tf in! You suck at anatomy
+UserMetaData: This user likes motorcycles
+UserPerformanceData: User lacks focus
+FeedbackData: Please focus on anatomy
 Time: 12/1/2025 6:00:52 PM
 ---------------------------
 User ID: b96dc943-9b21-4a9a-9c92-4508e6f3e777
 User Name: Player
-UserMetaData: This guy likes motorcycles
-UserPerformanceData: User lacks locking in
-FeedbackData: Please lock tf in! You suck at anatomy
+UserMetaData: This user likes motorcycles
+UserPerformanceData: User lacks focus
+FeedbackData: Please focus on anatomy
 Time: 12/1/2025 6:01:47 PM
 ---------------------------
 User ID: b96dc943-9b21-4a9a-9c92-4508e6f3e777
 User Name: Player
-UserMetaData: This guy likes motorcycles
-UserPerformanceData: User lacks locking in
-FeedbackData: Please lock tf in! You suck at anatomy
+UserMetaData: This user likes motorcycles
+UserPerformanceData: User lacks focus
+FeedbackData: Please focus on anatomy
 Tags: Anatomy, Muscles, Bones
 Time: 12/1/2025 6:04:19 PM
 ---------------------------
 User ID: b96dc943-9b21-4a9a-9c92-4508e6f3e777
 User Name: Player
-UserMetaData: This guy likes motorcycles
-UserPerformanceData: User lacks locking in
-FeedbackData: Please lock tf in! You suck at anatomy
+UserMetaData: This user likes motorcycles
+UserPerformanceData: User lacks focus
+FeedbackData: Please focus on anatomy
 Tags: Anatomy, Muscles, Bones
 Time: 12/1/2025 6:05:31 PM
 ---------------------------
@@ -88,9 +78,8 @@ Time: 12/1/2025 6:09:31 PM
 ---------------------------
 User ID: 0001
 User Name: Test Player
-UserMetaData: {uer needs to add meta data}
+UserMetaData: {user needs to add metadata}
 UserPerformanceData: {user needs to add performance data}
-FeedbackData: user has not gotten feedback yet
+FeedbackData: user has not received feedback yet
 Tags: test, medial, femur
 Time: 12/1/2025 6:11:05 PM
----------------------------
