@@ -21,16 +21,16 @@ public class TestUserManager : MonoBehaviour
         // ---------------------------
         // Add some test tags
         // ---------------------------
-        //userManager.AddTag("Anatomy");
-        //userManager.AddTag("Muscles");
-        //userManager.AddTag("Bones");
+        userManager.AddTag("Anatomy");
+        userManager.AddTag("Muscles");
+        userManager.AddTag("Bones");
 
         // ---------------------------
         // Update some metadata / performance / feedback
         // ---------------------------
-        //userManager.UpdateUserMeta("This guy likes motorcycles");
-        //userManager.UpdatePerformanceData("User lacks locking in");
-        //userManager.AddFeedback("Please lock tf in! You suck at anatomy");
+        userManager.UpdateUserMeta("This user likes motorcycles and goes to fast med school");
+        userManager.UpdatePerformanceData("User lacks focus on anatomy details");
+        userManager.AddFeedback("Please lock tf in! You suck at anatomy");
 
         userManager.SaveUser();
 
