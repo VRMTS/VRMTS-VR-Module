@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class ModuleManager : MonoBehaviour
 {
-    public static ModuleManager Instance;
+    public static ModuleManager Instance; // for the singleton pattern
 
-    public ModuleContext[] modules;
+    public ModuleContext[] modules; // each segment of the lab
 
     private int currentModuleIndex = -1;
 

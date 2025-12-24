@@ -5,6 +5,7 @@
 // ================================
 using UnityEngine;
 using System;
+using TMPro;
 
 
 // ================================
@@ -85,6 +86,22 @@ public class UserManager : MonoBehaviour
     public void ClearTags()
     {
         UserHelpers.ClearTags(CurrentUser);
+    }
+
+    // function to fill settings data - used for dev-testing purposes
+    public void FillSettingsData( TMP_Text userDataText )
+    {
+        // Placeholder for future settings data population
+         string TextFromUserManagerInstance = $"User ID: {CurrentUser.UserId}\n" +
+                         $"User Name: {CurrentUser.UserName}\n" +
+                         $"UserMetaData: {CurrentUser.UserMetaData}\n" +
+                         $"UserPerformanceData: {CurrentUser.UserPerformanceData}\n" +
+                         $"FeedbackData: {CurrentUser.FeedbackData}\n" +
+                         $"Tags: {string.Join(", ", CurrentUser.Tags)}\n" +
+                         $"Time: {System.DateTime.Now}\n" +
+                         "---------------------------\n";
+        
+        userDataText.text = TextFromUserManagerInstance;
     }
 
 }
