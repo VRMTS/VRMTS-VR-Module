@@ -1,82 +1,166 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
+
+[System.Serializable]
+public class SimpleUser
+{
+    public int userId;
+    public int studentId;
+    public string name;
+    public string email;
+}
 
 public class DBUpdater : MonoBehaviour
 {
     public static DBUpdater Instance;
 
-    // ------------------------------
-    // Simulated server endpoint
-    // ------------------------------
-    public string serverURL = "https://example.com/api/upload";
-    public bool isConnected = false;
+   /*currently putting this on hold...
+   
+    [Header("Server Configuration")]
+    // Change this IP to your local IP if running on Quest, or "localhost" if running in Editor
+    public string baseURL = "http://localhost/vrmts_api/"; 
 
-    // Queue for offline uploads
-    private List<TestResult> pendingUploads = new List<TestResult>();
+    [Header("Debug Status")]
+    public bool isLoggedIn = false;
+    public SimpleUser currentUser;
 
     void Awake()
     {
-        Instance ??= this;
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
-    // ------------------------------
-    // Public API
-    // ------------------------------
+    // =========================================================
+    // 1. AUTHENTICATION (Login)
+    // =========================================================
+
+    public void Login(string email, string password, System.Action<bool, string> callback)
+    {
+        StartCoroutine(LoginCoroutine(email, password, callback));
+    }
+
+    private IEnumerator LoginCoroutine(string email, string password, System.Action<bool, string> callback)
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("email", email);
+        form.AddField("password", password);
+
+        using (UnityWebRequest www = UnityWebRequest.Post(baseURL + "login.php", form))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError("Network Error: " + www.error);
+                callback?.Invoke(false, "Network Error");
+            }
+            else
+            {
+                string response = www.downloadHandler.text;
+                Debug.Log("Server Response: " + response);
+
+                // Assuming PHP returns JSON like: {"status":"success", "userId":1, "studentId":3, "name":"John"}
+                if (response.Contains("success"))
+                {
+                    currentUser = JsonUtility.FromJson<SimpleUser>(response); // You might need a wrapper for strict JSON
+                    isLoggedIn = true;
+                    callback?.Invoke(true, "Login Successful");
+                }
+                else
+                {
+                    callback?.Invoke(false, "Invalid Credentials");
+                }
+            }
+        }
+    }
+
+    // =========================================================
+    // 2. REGISTRATION (Create User + Student)
+    // =========================================================
+
+    public void Register(string email, string password, string name, System.Action<bool, string> callback)
+    {
+        StartCoroutine(RegisterCoroutine(email, password, name, callback));
+    }
+
+    private IEnumerator RegisterCoroutine(string email, string password, string name, System.Action<bool, string> callback)
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("email", email);
+        form.AddField("password", password);
+        form.AddField("name", name);
+
+        using (UnityWebRequest www = UnityWebRequest.Post(baseURL + "register.php", form))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                callback?.Invoke(false, www.error);
+            }
+            else
+            {
+                string response = www.downloadHandler.text;
+                if (response.Contains("success"))
+                    callback?.Invoke(true, "Registration Complete");
+                else
+                    callback?.Invoke(false, "Registration Failed: " + response);
+            }
+        }
+    }
+
+    // =========================================================
+    // 3. UPLOAD TEST RESULTS
+    // =========================================================
 
     public void UploadTestResult(TestResult result)
     {
-        Debug.Log("DBUploader → Simulated upload request received.");
-
-        if (!isConnected)
+        if (!isLoggedIn)
         {
-            Debug.Log("DBUploader → Offline. Storing result locally.");
-            pendingUploads.Add(result);
+            Debug.LogError("Cannot upload result: User not logged in.");
             return;
         }
 
-        StartCoroutine(SimulateUpload(result));
+        StartCoroutine(UploadResultCoroutine(result));
     }
 
-    public void SyncPendingData()
+    private IEnumerator UploadResultCoroutine(TestResult result)
     {
-        Debug.Log("DBUploader → Attempting to sync pending uploads...");
+        WWWForm form = new WWWForm();
+        
+        // Match these fields with the PHP script
+        form.AddField("studentId", currentUser.studentId);
+        form.AddField("labName", result.labName); // We will map LabName to a ModuleID in PHP
+        form.AddField("score", result.correct);
+        form.AddField("total", result.totalQuestions);
+        form.AddField("gainedTags", string.Join(",", result.gainedTags)); // Send tags as comma string
 
-        if (!isConnected || pendingUploads.Count == 0)
-            return;
+        using (UnityWebRequest www = UnityWebRequest.Post(baseURL + "upload_result.php", form))
+        {
+            yield return www.SendWebRequest();
 
-        foreach (var r in pendingUploads)
-            StartCoroutine(SimulateUpload(r));
-
-        pendingUploads.Clear();
+            if (www.result == UnityWebRequest.Result.Success)
+            {
+                Debug.Log("Upload Success: " + www.downloadHandler.text);
+            }
+            else
+            {
+                Debug.LogError("Upload Failed: " + www.error);
+            }
+        }
     }
 
-    public void SetConnectionStatus(bool status)
-    {
-        isConnected = status;
-        Debug.Log("DBUploader → Connection status set to: " + status);
-    }
 
-    // ------------------------------
-    // Internal simulation helpers
-    // ------------------------------
 
-    private IEnumerator SimulateUpload(TestResult result)
-    {
-        Debug.Log("DBUploader → Uploading to: " + serverURL);
 
-        yield return new WaitForSeconds(1.5f); // simulate delay
-
-        Debug.Log("DBUploader → Upload successful (simulated).");
-    }
-
-    private void SavePendingLocally()
-    {
-        Debug.Log("DBUploader → Saving pending uploads locally (placeholder).");
-    }
-
-    private void LoadPendingOnStart()
-    {
-        Debug.Log("DBUploader → Loading pending uploads (placeholder).");
-    }
+    currently putting this on hold...*/
 }

@@ -66,7 +66,7 @@ MonoBehaviour:
   m_Name: iPhone
   m_EditorClassIdentifier: 
   features:
-  - {fileID: -1696708899855029901}
+  - {fileID: -1066520065585982825}
   m_renderMode: 1
   m_latencyOptimization: 0
   m_autoColorSubmissionMode: 1
@@ -18863,11 +18863,11 @@ MonoBehaviour:
   m_Name: MetaQuestTouchProControllerProfile Android
   m_EditorClassIdentifier: 
   m_enabled: 0
-  nameUi: 
-  version: 
-  featureIdInternal: 
-  openxrExtensionStrings: 
-  company: 
+  nameUi: Meta Quest Touch Pro Controller Profile
+  version: 0.0.1
+  featureIdInternal: com.unity.openxr.feature.input.metaquestpro
+  openxrExtensionStrings: XR_FB_touch_controller_pro
+  company: Unity
   priority: 0
   required: 0
 --- !u!114 &-6333769317185902323
@@ -39174,26 +39174,26 @@ MonoBehaviour:
   m_Name: Standalone
   m_EditorClassIdentifier: 
   features:
-  - {fileID: -1047753595261892122}
-  - {fileID: -6748026018272832250}
-  - {fileID: -2192300890632736874}
+  - {fileID: -403685784864702224}
+  - {fileID: 2073565235640021272}
+  - {fileID: -8185713768834626421}
   - {fileID: -79766396374544297}
-  - {fileID: 5206369157922845925}
-  - {fileID: -3282828477656576905}
-  - {fileID: -8621955273620844526}
-  - {fileID: -8742405418291898123}
-  - {fileID: -5545480149918268887}
-  - {fileID: -4133021741741200786}
-  - {fileID: -4314466618941312080}
-  - {fileID: -3016694992967188743}
-  - {fileID: 61347388004577850}
-  - {fileID: -2238365726208922838}
-  - {fileID: 6647369056634309484}
-  - {fileID: 6248133450814079332}
-  - {fileID: 4707696237311302438}
-  - {fileID: 2751732639067567476}
-  - {fileID: 5178117896717076268}
-  - {fileID: -991494792940360101}
+  - {fileID: 8250664019552283275}
+  - {fileID: -968893932203274486}
+  - {fileID: -8645842519334775648}
+  - {fileID: 1898222001157216685}
+  - {fileID: 1869836983297574817}
+  - {fileID: 2574530633004089826}
+  - {fileID: -5855064326192491894}
+  - {fileID: -6936852145526800934}
+  - {fileID: 1074663331889794070}
+  - {fileID: -7444196249530597335}
+  - {fileID: -919193544152011033}
+  - {fileID: 5471878930544347975}
+  - {fileID: -3619949343543527238}
+  - {fileID: -3952937251425501687}
+  - {fileID: 6103114739453048609}
+  - {fileID: 7244630804861873594}
   m_renderMode: 1
   m_latencyOptimization: 0
   m_autoColorSubmissionMode: 1
@@ -59165,24 +59165,24 @@ MonoBehaviour:
   m_Name: Android
   m_EditorClassIdentifier: 
   features:
-  - {fileID: -4174230780290404226}
-  - {fileID: 1123311943973117503}
-  - {fileID: -6209193731988489619}
-  - {fileID: 7322181272144532339}
-  - {fileID: 8326186547671634421}
-  - {fileID: 5870082859017649936}
-  - {fileID: 6280952988690238101}
-  - {fileID: -501842150880173293}
-  - {fileID: -3728557980934633084}
-  - {fileID: -2321521337972980533}
-  - {fileID: -6702113575437934688}
-  - {fileID: -9112836848810712870}
-  - {fileID: -6384574256771025173}
-  - {fileID: -1695959556898125021}
-  - {fileID: 354158909360389076}
-  - {fileID: 6796617009593910832}
-  - {fileID: -7982546734303931346}
-  - {fileID: 1532357481063130399}
+  - {fileID: -28002826458988878}
+  - {fileID: -5963401293273790411}
+  - {fileID: -4945570862599839932}
+  - {fileID: 2154782543397584759}
+  - {fileID: -164608077535112117}
+  - {fileID: 7394952647607912276}
+  - {fileID: -3087922917601181461}
+  - {fileID: 3723138448449454717}
+  - {fileID: -1155364360913145234}
+  - {fileID: -4918195959209152604}
+  - {fileID: -1000577321412075481}
+  - {fileID: -6893464949643082404}
+  - {fileID: 3047522208992884555}
+  - {fileID: 4305456214646328079}
+  - {fileID: 277508120713865432}
+  - {fileID: 7358472816521369757}
+  - {fileID: 3228132935635989945}
+  - {fileID: -2182743933230518134}
   m_renderMode: 1
   m_latencyOptimization: 0
   m_autoColorSubmissionMode: 1
@@ -73076,11 +73076,11 @@ MonoBehaviour:
   m_Name: KHRSimpleControllerProfile Android
   m_EditorClassIdentifier: 
   m_enabled: 0
-  nameUi: 
-  version: 
-  featureIdInternal: 
+  nameUi: Khronos Simple Controller Profile
+  version: 0.0.1
+  featureIdInternal: com.unity.openxr.feature.input.khrsimpleprofile
   openxrExtensionStrings: 
-  company: 
+  company: Unity
   priority: 0
   required: 0
 --- !u!114 &2130089245925964981
@@ -76117,11 +76117,11 @@ MonoBehaviour:
   m_Name: OculusQuestFeature Android
   m_EditorClassIdentifier: 
   m_enabled: 0
-  nameUi: 
-  version: 
-  featureIdInternal: 
-  openxrExtensionStrings: 
-  company: 
+  nameUi: Oculus Quest Support
+  version: 1.0.0
+  featureIdInternal: com.unity.openxr.feature.oculusquest
+  openxrExtensionStrings: XR_OCULUS_android_initialize_loader
+  company: Unity
   priority: 0
   required: 0
   targetQuest: 1
@@ -87730,24 +87730,24 @@ MonoBehaviour:
   m_Name: WSA
   m_EditorClassIdentifier: 
   features:
-  - {fileID: 6189600013979353235}
-  - {fileID: 7887801777803569173}
-  - {fileID: 4532176855110562644}
-  - {fileID: 3177508452048801289}
-  - {fileID: 3011146209593126367}
-  - {fileID: -1138485118668741295}
-  - {fileID: 6852800511826473641}
-  - {fileID: 2608412149698080700}
-  - {fileID: 7558308421341659712}
-  - {fileID: 9218445913104573451}
-  - {fileID: 8564626625227413147}
-  - {fileID: -3226347392175474488}
-  - {fileID: -7266464679908289579}
-  - {fileID: -2449578899857734023}
-  - {fileID: -6663909935212629928}
-  - {fileID: -1131048238345628323}
-  - {fileID: -533853309200964440}
-  - {fileID: -3596173025237551034}
+  - {fileID: 8925194858914266290}
+  - {fileID: -4989628867413569927}
+  - {fileID: 2323106309855781306}
+  - {fileID: 6559532270662722450}
+  - {fileID: -2108630451555483325}
+  - {fileID: 3391818924075414798}
+  - {fileID: 8906299041912448075}
+  - {fileID: -2462085946553047968}
+  - {fileID: -4456143940967018211}
+  - {fileID: 8540611924390182961}
+  - {fileID: 4959618328992034014}
+  - {fileID: 1559450655377602625}
+  - {fileID: -7926817261033248864}
+  - {fileID: -1582034619070287749}
+  - {fileID: -4036606195297167305}
+  - {fileID: 1686614123598647982}
+  - {fileID: -1891430869500805155}
+  - {fileID: 4950231896879420998}
   m_renderMode: 1
   m_latencyOptimization: 0
   m_autoColorSubmissionMode: 1
@@ -103281,11 +103281,11 @@ MonoBehaviour:
   m_Name: EyeGazeInteraction Android
   m_EditorClassIdentifier: 
   m_enabled: 0
-  nameUi: 
-  version: 
-  featureIdInternal: 
-  openxrExtensionStrings: 
-  company: 
+  nameUi: Eye Gaze Interaction Profile
+  version: 0.0.1
+  featureIdInternal: com.unity.openxr.feature.input.eyetracking
+  openxrExtensionStrings: XR_EXT_eye_gaze_interaction
+  company: Unity
   priority: 0
   required: 0
 --- !u!114 &6706024287326743645
