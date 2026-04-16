@@ -1,7 +1,0 @@
-{
-    "UserId": "b96dc943-9b21-4a9a-9c92-4508e6f3e777",
-    "UserName": "Player",
-    "UserMetaData": "{\n    \"items\": [\n        {\n            \"Key\": \"LastLogin\",\n            \"Value\": \"11/26/2025 9:27:27 AM\"\n        },\n        {\n            \"Key\": \"LastTestRun\",\n            \"Value\": \"11/26/2025 2:35:13 PM\"\n        }\n    ]\n}",
-    "UserPerformanceData": "{\n    \"items\": [\n        {\n            \"Key\": \"HighScore\",\n            \"Value\": \"42\"\n        },\n        {\n            \"Key\": \"TestScore\",\n            \"Value\": \"99\"\n        }\n    ]\n}",
-    "FeedbackData": "Automated test run."
-}
