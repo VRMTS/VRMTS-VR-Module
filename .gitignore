@@ -106,7 +106,7 @@ ExportedObj/
 sysinfo.txt
 
 # Builds
-*.apk
+#*.apk
 *.aab
 *.unitypackage
 *.unitypackage.meta
