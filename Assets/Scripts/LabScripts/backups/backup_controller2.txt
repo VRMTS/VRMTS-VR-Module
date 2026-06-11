@@ -1,0 +1,347 @@
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using System.Collections.Generic;
+using System.Collections;
+
+// ================================
+// File: LabController.cs
+// Purpose: Interactive Lab with Typewriter Text, Audio, and Particle Timing
+// ================================
+public class LabController : MonoBehaviour
+{
+    [Header("--- 3D Model References ---")]
+    public Transform mainModelPivot;
+    public GameObject interactiveModeRoot;
+
+    [Header("--- Interactive FX ---")]
+    public ParticleSystem successParticles;
+    public AudioSource labAudioSource;
+    [Tooltip("How fast the text types out (seconds per character).")]
+    public float typeWriterSpeed = 0.05f;
+
+    [Header("--- Data Definition ---")]
+    public List<AnatomyPart> anatomyParts;     // Standard Mode List
+    public List<LabStep> interactiveSteps;     // Interactive Steps List
+
+    [Header("--- UI: Standard Mode ---")]
+    public GameObject leftPanelRoot;
+    public GameObject rightPanelRoot;
+    public TMP_Dropdown partSelectorDropdown;
+    public Slider sliderRotX, sliderRotY, sliderRotZ, sliderZoom;
+    public Button btnEnterInteractive, btnExitToMenu;
+
+    [Header("--- UI: Interactive Mode ---")]
+    public GameObject interactiveHUDRoot;
+    public CanvasGroup interactiveCanvasGroup; 
+    public TextMeshProUGUI instructionText;
+    public Button btnNextStep;
+    public Button btnExitInteractive;
+
+    // --- Internal State ---
+    private Vector3 initialScale;
+    private Quaternion initialRotation;
+    
+    // Interactive State
+    private int currentStepIndex = -1;
+    private float sessionStartTime;
+    private bool isInteractiveActive = false;
+    private Coroutine currentRoutine; // To stop typing if we exit early
+
+    // --- Data Structures ---
+    [System.Serializable]
+    public class AnatomyPart
+    {
+        public string name;
+        public GameObject partObject;
+    }
+
+    [System.Serializable]
+    public class LabStep
+    {
+        public string stepName;
+        [TextArea] public string instruction;
+        public GameObject targetObject;   // The part to appear
+        public AudioClip voiceClip;       // The voiceover
+    }
+
+    [System.Serializable]
+    public class LabAnalytics
+    {
+        public string lastDatePlayed;
+        public int highestStepReached;
+        public float totalSecondsSpent;
+        public int totalSessions;
+    }
+
+    void Start()
+    {
+        // 1. Store initial transform data
+        if (mainModelPivot != null)
+        {
+            initialScale = mainModelPivot.localScale;
+            initialRotation = mainModelPivot.localRotation;
+        }
+
+        // 2. Initialize UI
+        InitializeDropdown();
+        InitializeSliders();
+        InitializeButtons();
+
+        // 3. Defaults
+        SetInteractiveMode(false);
+    }
+
+    // ---------------------------------------------------------
+    // Initialization (Standard Mode)
+    // ---------------------------------------------------------
+    void InitializeDropdown()
+    {
+        if (partSelectorDropdown == null) return;
+        partSelectorDropdown.ClearOptions();
+        List<string> options = new List<string>();
+
+        foreach (var part in anatomyParts)
+        {
+            options.Add(part.name);
+        }
+        partSelectorDropdown.AddOptions(options);
+        partSelectorDropdown.onValueChanged.RemoveAllListeners(); 
+        partSelectorDropdown.onValueChanged.AddListener(OnPartSelected);
+
+        if (anatomyParts.Count > 0)
+        {
+            partSelectorDropdown.value = 0; 
+            OnPartSelected(0);              
+        }
+    }
+
+    void InitializeSliders()
+    {
+        SetupSlider(sliderRotX, 0, 360, (val) => UpdateModelTransform());
+        SetupSlider(sliderRotY, 0, 360, (val) => UpdateModelTransform());
+        SetupSlider(sliderRotZ, 0, 360, (val) => UpdateModelTransform());
+        SetupSlider(sliderZoom, 0.5f, 2.5f, (val) => UpdateModelTransform());
+        if(sliderZoom != null) sliderZoom.value = 1.0f;
+    }
+
+    void SetupSlider(Slider s, float min, float max, UnityEngine.Events.UnityAction<float> action)
+    {
+        if (s == null) return;
+        s.minValue = min;
+        s.maxValue = max;
+        s.onValueChanged.RemoveAllListeners();
+        s.onValueChanged.AddListener(action);
+    }
+
+    void InitializeButtons()
+    {
+        if (btnEnterInteractive != null) btnEnterInteractive.onClick.AddListener(() => SetInteractiveMode(true));
+        if (btnExitInteractive != null) btnExitInteractive.onClick.AddListener(() => SetInteractiveMode(false));
+        if (btnExitToMenu != null) btnExitToMenu.onClick.AddListener(ExitToMainMenu);
+        
+        if (btnNextStep != null) btnNextStep.onClick.AddListener(AdvanceStep);
+    }
+
+    void UpdateModelTransform()
+    {
+        if (mainModelPivot == null) return;
+        float x = sliderRotX ? sliderRotX.value : 0;
+        float y = sliderRotY ? sliderRotY.value : 0;
+        float z = sliderRotZ ? sliderRotZ.value : 0;
+        mainModelPivot.localRotation = Quaternion.Euler(x, y, z) * initialRotation;
+        float scaleMultiplier = sliderZoom ? sliderZoom.value : 1.0f;
+        mainModelPivot.localScale = initialScale * scaleMultiplier;
+    }
+
+    void OnPartSelected(int index)
+    {
+        for (int i = 0; i < anatomyParts.Count; i++)
+        {
+            if (anatomyParts[i].partObject != null)
+            {
+                anatomyParts[i].partObject.SetActive(i == index);
+            }
+        }
+    }
+
+    // =========================================================
+    // INTERACTIVE MODE LOGIC (UPDATED)
+    // =========================================================
+
+    public void SetInteractiveMode(bool isInteractive)
+    {
+        isInteractiveActive = isInteractive;
+
+        // Toggle Standard UI
+        if (leftPanelRoot) leftPanelRoot.SetActive(!isInteractive);
+        if (rightPanelRoot) rightPanelRoot.SetActive(!isInteractive);
+        if (mainModelPivot) mainModelPivot.gameObject.SetActive(!isInteractive);
+        
+        // Toggle Interactive UI
+        if (interactiveModeRoot) interactiveModeRoot.SetActive(isInteractive);
+        if (interactiveHUDRoot) interactiveHUDRoot.SetActive(isInteractive);
+
+        if (isInteractive)
+        {
+            StartCoroutine(StartInteractiveSession());
+        }
+        else
+        {
+            // Reset / Save when exiting
+            SaveAnalytics();
+            StopAllCoroutines();
+            if (labAudioSource) labAudioSource.Stop();
+        }
+    }
+
+    IEnumerator StartInteractiveSession()
+    {
+        // 1. Fade In
+        if (interactiveCanvasGroup != null)
+        {
+            interactiveCanvasGroup.alpha = 0;
+            float duration = 0.5f;
+            float time = 0;
+            while (time < duration)
+            {
+                interactiveCanvasGroup.alpha = Mathf.Lerp(0, 1, time / duration);
+                time += Time.deltaTime;
+                yield return null;
+            }
+            interactiveCanvasGroup.alpha = 1;
+        }
+
+        // 2. Hide all interactive parts initially
+        foreach(var step in interactiveSteps)
+        {
+            if(step.targetObject != null) step.targetObject.SetActive(false);
+        }
+
+        // 3. Reset Data
+        currentStepIndex = -1;
+        sessionStartTime = Time.time;
+        if(instructionText) instructionText.text = "";
+        
+        // 4. Start First Step
+        AdvanceStep();
+    }
+
+    void AdvanceStep()
+    {
+        currentStepIndex++;
+
+        // Check completion
+        if (currentStepIndex >= interactiveSteps.Count)
+        {
+            FinishLab();
+            return;
+        }
+
+        // Stop any running typewriter/audio
+        if (currentRoutine != null) StopCoroutine(currentRoutine);
+        if (labAudioSource) labAudioSource.Stop();
+
+        // Run the new sequence
+        currentRoutine = StartCoroutine(PlayStepSequence(interactiveSteps[currentStepIndex]));
+    }
+
+    // --- THE CORE SEQUENCE: Text -> Model -> Particles ---
+    IEnumerator PlayStepSequence(LabStep step)
+    {
+        // 0. Disable Button so user can't spam Next
+        if (btnNextStep) btnNextStep.interactable = false;
+
+        // 1. Hide Target initially (it appears AFTER instructions)
+        if (step.targetObject != null) step.targetObject.SetActive(false);
+
+        // 2. Start Audio (if any)
+        if (labAudioSource != null && step.voiceClip != null)
+        {
+            labAudioSource.clip = step.voiceClip;
+            labAudioSource.Play();
+        }
+
+        // 3. Typewriter Effect for Instruction
+        if (instructionText != null)
+        {
+            instructionText.text = ""; // Clear
+            string fullText = $"Step {currentStepIndex + 1}: {step.instruction}";
+            
+            foreach (char c in fullText)
+            {
+                instructionText.text += c;
+                yield return new WaitForSeconds(typeWriterSpeed);
+            }
+        }
+
+        // Short pause after typing before revealing model (optional)
+        yield return new WaitForSeconds(0.2f);
+
+        // 4. Reveal Model
+        if (step.targetObject != null)
+        {
+            step.targetObject.SetActive(true);
+
+            // 5. Play Particles at the model's position
+            if (successParticles != null)
+            {
+                // Move particles to the center of the object
+                successParticles.transform.position = step.targetObject.transform.position;
+                successParticles.Play();
+            }
+        }
+
+        // 6. Re-enable Button
+        if (btnNextStep) btnNextStep.interactable = true;
+    }
+
+    void FinishLab()
+    {
+        if (instructionText) instructionText.text = "Lab Completed! Saving Data...";
+        if (btnNextStep) btnNextStep.interactable = false;
+        
+        SaveAnalytics();
+        Invoke("ExitToMainMenu", 2.0f);
+    }
+
+    // =========================================================
+    // ANALYTICS & SAVING
+    // =========================================================
+
+    void SaveAnalytics()
+    {
+        float duration = Time.time - sessionStartTime;
+        
+        string json = PlayerPrefs.GetString("LabAnalytics", "");
+        LabAnalytics data = new LabAnalytics();
+        
+        if (!string.IsNullOrEmpty(json))
+        {
+            data = JsonUtility.FromJson<LabAnalytics>(json);
+        }
+
+        data.lastDatePlayed = System.DateTime.Now.ToString();
+        data.totalSecondsSpent += duration;
+        data.totalSessions++;
+        
+        if (currentStepIndex > data.highestStepReached)
+        {
+            data.highestStepReached = currentStepIndex;
+        }
+
+        string newJson = JsonUtility.ToJson(data);
+        PlayerPrefs.SetString("LabAnalytics", newJson);
+        PlayerPrefs.Save();
+
+        Debug.Log($"Analytics Saved: {newJson}");
+    }
+
+    void ExitToMainMenu()
+    {
+        if (SceneChanger.Instance != null)
+            SceneChanger.Instance.ChangeScene("MainMenu"); 
+        else
+            UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+    }
+}

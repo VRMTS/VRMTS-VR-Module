@@ -1,0 +1,33 @@
+Lab_Manager (Empty GameObject -> Attach LabController.cs)
+
+Module_Planes (Canvas)
+    UI_Mode_Selection (Panel at top right or bottom right)
+        Btn_Mode_Explore
+        Btn_Mode_Learning
+        Btn_Mode_Interactive
+
+UI_Left_Panel (Your existing Selection Dropdown)
+
+UI_Right_Panel (Your existing Sliders/Controls)
+    Note: This will be hidden when not in Explore Mode.
+
+UI_Learning_HUD (Panel - Hidden by default)
+    Instruction_Text (TMP)
+    Btn_Next
+
+UI_Interactive_HUD (Panel - Hidden by default)
+    Text_Info ("Free Roam Mode - Grab and Throw!")
+    Btn_Reset_Objects
+
+--- 3D ROOTS ---
+MainModel_Pivot (Your Existing Explore Model)
+    Root_Learning (Empty GameObject - Hidden by default)
+        Particle_Effect_Global (Uncheck Loop/PlayOnAwake)
+        Step1_Object (GameObject)
+           Attach: BoxCollider, XR Grab Interactable
+           Attach: LabItem.cs
+        Step2_Object...
+    Root_Interactive (Empty GameObject - Hidden by default)
+        Heart_Physics (GameObject)
+            Attach: Rigidbody, BoxCollider, XR Grab Interactable
+            Attach: LabItem.cs (Optional, if you want particles)

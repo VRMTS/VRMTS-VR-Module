@@ -1,0 +1,641 @@
+
+
+
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using System.Collections.Generic;
+using System.Collections;
+
+public class LabController : MonoBehaviour
+{
+    public static LabController Instance;
+
+    public enum LabMode { Explore = 0, Learning = 1, Interactive = 2 }
+    
+    [Header("--- Current State ---")]
+    public LabMode currentMode = LabMode.Learning; // Default to Learning now
+
+    [Header("--- Progression & Locking ---")][Tooltip("Unique save key for this specific lab.")]
+    public string labSaveKey = "Lab1_Completed";[Tooltip("The button that switches to Explore Mode.")]
+    public Button btnModeExplore;     
+    [Tooltip("The button that switches to Interactive Mode.")]
+    public Button btnModeInteractive; 
+    private bool isLabCompleted = false;[Header("--- 3D Roots (Parents) ---")]
+    public GameObject rootExplore;     
+    public GameObject rootLearning;    
+    public GameObject rootInteractive; 
+
+    [Header("--- UI: Panels ---")]
+    public GameObject uiPanelExploreLeft;  
+    public GameObject uiPanelExploreRight; 
+    public GameObject uiPanelLearning;     
+    public GameObject uiPanelInteractive;  
+    public GameObject uiModeSelection;[Header("--- Explore Mode Settings ---")]
+    public Transform explorePivot; 
+    public TMP_Dropdown exploreDropdown; 
+    public List<ExplorePart> exploreParts; 
+    
+    [Header("--- Explore Sliders ---")]
+    public Slider sliderRotX;
+    public Slider sliderRotY;
+    public Slider sliderRotZ;
+    public Slider sliderZoom;
+    
+    private Vector3 initScale;
+    private Quaternion initRot;[Header("--- Learning Mode Settings ---")]
+    public TextMeshProUGUI instructionText;
+    public Button btnNextStep;
+    public AudioSource labAudioSource;
+    public float typeWriterSpeed = 0.04f;
+    public List<LabStep> learningSteps;
+
+    private int currentStepIndex = -1;
+    private bool stepInteractionDone = false; 
+
+    // --- DATA STRUCTURES ---
+
+    [System.Serializable]
+    public class ExplorePart
+    {
+        public string name;
+        public GameObject modelPart; 
+    }
+
+    [System.Serializable]
+    public class LabStep
+    {
+        public string name;
+        [TextArea] public string instruction;
+        public GameObject visualRoot; 
+        public GameObject interactionPart; 
+        public bool requireInteraction; 
+        public AudioClip voiceClip;
+    }
+
+    void Awake() 
+    { 
+        Instance = this; 
+        if (explorePivot) 
+        { 
+            initScale = explorePivot.localScale; 
+            initRot = explorePivot.localRotation; 
+        }
+        
+        // Check Save State
+        isLabCompleted = PlayerPrefs.GetInt(labSaveKey, 0) == 1;
+        ResetProgress(); // TEMP: Reset progress for testing/demo purposes. Comment out to keep progress between sessions.
+    }
+
+    void Start()
+    {
+        InitializeExploreSliders();
+        InitializeExploreDropdown();
+        InitializeButtons(); 
+        
+        UpdateLockUI();
+
+        // Always start in Learning Mode (1) so they follow the curriculum first
+        SwitchMode(1); 
+    }
+
+    void InitializeButtons()
+    {
+        if (btnNextStep != null)
+        {
+            btnNextStep.onClick.RemoveAllListeners();
+            btnNextStep.onClick.AddListener(AdvanceStep);
+        }
+    }
+
+    // Locks or Unlocks the mode buttons based on progress
+    void UpdateLockUI()
+    {
+        if (btnModeExplore) btnModeExplore.interactable = isLabCompleted;
+        if (btnModeInteractive) btnModeInteractive.interactable = isLabCompleted;
+    }
+
+    // =========================================================
+    // 1. MODE SWITCHING
+    // =========================================================
+    public void SwitchMode(int modeIndex)
+    {
+        // CONTENT LOCK GUARD: Prevent switching if not completed
+        if (!isLabCompleted && modeIndex != 1)
+        {
+            Debug.LogWarning("Access Denied: Complete Learning Mode first!");
+            return; 
+        }
+
+        currentMode = (LabMode)modeIndex;
+
+        if(rootExplore) rootExplore.SetActive(false);
+        if(rootLearning) rootLearning.SetActive(false);
+        if(rootInteractive) rootInteractive.SetActive(false);
+
+        if(uiPanelExploreLeft) uiPanelExploreLeft.SetActive(false);
+        if(uiPanelExploreRight) uiPanelExploreRight.SetActive(false);
+        if(uiPanelLearning) uiPanelLearning.SetActive(false);
+        if(uiPanelInteractive) uiPanelInteractive.SetActive(false);
+
+        switch (currentMode)
+        {
+            case LabMode.Explore:
+                if(rootExplore) rootExplore.SetActive(true);
+                if(uiPanelExploreLeft) uiPanelExploreLeft.SetActive(true);
+                if(uiPanelExploreRight) uiPanelExploreRight.SetActive(true);
+                break;
+
+            case LabMode.Learning:
+                if(rootLearning) rootLearning.SetActive(true);
+                if(uiPanelLearning) uiPanelLearning.SetActive(true);
+                StartLearningSession();
+                break;
+
+            case LabMode.Interactive:
+                if(rootInteractive) rootInteractive.SetActive(true);
+                if(uiPanelInteractive) uiPanelInteractive.SetActive(true);
+                break;
+        }
+    }
+
+    // =========================================================
+    // 2. EXPLORE MODE LOGIC
+    // =========================================================
+    void InitializeExploreSliders()
+    {
+        SetupRotationSlider(sliderRotX);
+        SetupRotationSlider(sliderRotY);
+        SetupRotationSlider(sliderRotZ);
+
+        if (sliderZoom)
+        {
+            sliderZoom.minValue = 0.5f;
+            sliderZoom.maxValue = 2.5f;
+            sliderZoom.value = 1.0f; 
+            sliderZoom.onValueChanged.AddListener((v) => UpdateExploreTransform());
+        }
+    }
+
+    void SetupRotationSlider(Slider s)
+    {
+        if(s != null)
+        {
+            s.minValue = 0f;
+            s.maxValue = 360f; 
+            s.onValueChanged.RemoveAllListeners();
+            s.onValueChanged.AddListener((v) => UpdateExploreTransform());
+        }
+    }
+
+    void InitializeExploreDropdown()
+    {
+        if (exploreDropdown == null) return;
+
+        exploreDropdown.ClearOptions();
+        List<string> options = new List<string>(); 
+
+        foreach (var part in exploreParts)
+        {
+            options.Add(part.name);
+        }
+
+        exploreDropdown.AddOptions(options);
+        exploreDropdown.onValueChanged.RemoveAllListeners();
+        exploreDropdown.onValueChanged.AddListener(OnExploreDropdownChanged);
+
+        if (exploreParts.Count > 0)
+        {
+            exploreDropdown.value = 0;
+            OnExploreDropdownChanged(0);
+        }
+    }
+
+    void OnExploreDropdownChanged(int index)
+    {
+        for (int i = 0; i < exploreParts.Count; i++)
+        {
+            if (exploreParts[i].modelPart != null)
+            {
+                bool isActive = (i == index);
+                exploreParts[i].modelPart.SetActive(isActive);
+            }
+        }
+    }
+
+    void UpdateExploreTransform()
+    {
+        if(!explorePivot) return;
+        
+        float x = sliderRotX ? sliderRotX.value : 0;
+        float y = sliderRotY ? sliderRotY.value : 0;
+        float z = sliderRotZ ? sliderRotZ.value : 0;
+        explorePivot.localRotation = Quaternion.Euler(x, y, z) * initRot;
+        
+        float scale = sliderZoom ? sliderZoom.value : 1.0f;
+        explorePivot.localScale = initScale * scale;
+    }
+
+    // =========================================================
+    // 3. LEARNING MODE LOGIC
+    // =========================================================
+    void StartLearningSession()
+    {
+        foreach(var step in learningSteps) 
+            if(step.visualRoot) step.visualRoot.SetActive(false);
+
+        // Only restart sequence if they haven't completed it yet
+        if (!isLabCompleted)
+        {
+            currentStepIndex = -1;
+            AdvanceStep();
+        }
+        else
+        {
+            // If returning to Learning mode after finishing it, just show completion text
+            if(instructionText) instructionText.text = "Lab already completed. You may use Explore or Interactive mode.";
+            if(btnNextStep) btnNextStep.interactable = false;
+        }
+    }
+
+    public void AdvanceStep()
+    {
+        // Cleanup old step
+        if(currentStepIndex >= 0 && currentStepIndex < learningSteps.Count)
+        {
+            if(learningSteps[currentStepIndex].visualRoot)
+                learningSteps[currentStepIndex].visualRoot.SetActive(false);
+        }
+
+        currentStepIndex++;
+
+        if (currentStepIndex >= learningSteps.Count)
+        {
+            // --- PROGRESS SAVED AND UNLOCKED ---
+            isLabCompleted = true;
+            PlayerPrefs.SetInt(labSaveKey, 1);
+            PlayerPrefs.Save();
+            UpdateLockUI(); // Unlocks the other buttons
+
+            instructionText.text = "<color=green>Lab Completed!</color>\nExplore and Interactive Modes are now unlocked.";
+            btnNextStep.interactable = false;
+            return;
+        }
+
+        StartCoroutine(PlayStepSequence(learningSteps[currentStepIndex]));
+    }
+
+    IEnumerator PlayStepSequence(LabStep step)
+    {
+        stepInteractionDone = false;
+        btnNextStep.interactable = false; 
+
+        if(labAudioSource && step.voiceClip) { labAudioSource.clip = step.voiceClip; labAudioSource.Play(); }
+
+        instructionText.text = "";
+        foreach(char c in step.instruction)
+        {
+            instructionText.text += c;
+            yield return new WaitForSeconds(typeWriterSpeed);
+        }
+
+        // SHOW THE PARENT (Visuals)
+        if(step.visualRoot) step.visualRoot.SetActive(true);
+
+        if (!step.requireInteraction)
+        {
+            btnNextStep.interactable = true;
+        }
+        else
+        {
+            instructionText.text += "\n<color=yellow>(Grab object to continue)</color>";
+        }
+    }
+
+    public void OnItemInteracted(LabItem item)
+    {
+        if (currentMode != LabMode.Learning) return;
+        if (currentStepIndex < 0 || currentStepIndex >= learningSteps.Count) return;
+
+        LabStep currentStep = learningSteps[currentStepIndex];
+
+        if (item.gameObject == currentStep.interactionPart)
+        {
+            if (!stepInteractionDone)
+            {
+                stepInteractionDone = true;
+                btnNextStep.interactable = true; 
+                instructionText.text = currentStep.instruction + "\n<color=green>Great! Press Next.</color>";
+            }
+        }
+    }
+
+    // --- DEBUG / DEMO RESET ---
+    // If you need to reset the progress before your meeting tomorrow, 
+    // hook this up to a hidden button, or just un-comment it in Start() temporarily.
+    public void ResetProgress()
+    {
+        PlayerPrefs.SetInt(labSaveKey, 0);
+        PlayerPrefs.Save();
+        isLabCompleted = false;
+        UpdateLockUI();
+        Debug.Log("Progress Reset!");
+    }
+}
+/*using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using System.Collections.Generic;
+using System.Collections;
+
+public class LabController : MonoBehaviour
+{
+    public static LabController Instance;
+
+    public enum LabMode { Explore = 0, Learning = 1, Interactive = 2 }
+    
+    [Header("--- Current State ---")]
+    public LabMode currentMode = LabMode.Explore;
+
+    [Header("--- 3D Roots (Parents) ---")]
+    public GameObject rootExplore;     
+    public GameObject rootLearning;    
+    public GameObject rootInteractive; 
+
+    [Header("--- UI: Panels ---")]
+    public GameObject uiPanelExploreLeft;  
+    public GameObject uiPanelExploreRight; 
+    public GameObject uiPanelLearning;     
+    public GameObject uiPanelInteractive;  
+    public GameObject uiModeSelection;     
+
+    [Header("--- Explore Mode Settings ---")]
+    public Transform explorePivot; 
+    public TMP_Dropdown exploreDropdown; 
+    public List<ExplorePart> exploreParts; 
+    
+    [Header("--- Explore Sliders ---")]
+    public Slider sliderRotX;
+    public Slider sliderRotY;
+    public Slider sliderRotZ;
+    public Slider sliderZoom;
+    
+    private Vector3 initScale;
+    private Quaternion initRot;
+
+    [Header("--- Learning Mode Settings ---")]
+    public TextMeshProUGUI instructionText;
+    public Button btnNextStep;
+    public AudioSource labAudioSource;
+    public float typeWriterSpeed = 0.04f;
+    public List<LabStep> learningSteps;
+
+    private int currentStepIndex = -1;
+    private bool stepInteractionDone = false; 
+
+    // --- DATA STRUCTURES ---
+
+    [System.Serializable]
+    public class ExplorePart
+    {
+        public string name;
+        public GameObject modelPart; 
+    }
+
+    [System.Serializable]
+    public class LabStep
+    {
+        public string name;
+        [TextArea] public string instruction;
+        
+        [Tooltip("The PARENT object to show/hide (e.g., The whole model group)")]
+        public GameObject visualRoot; 
+
+        [Tooltip("The CHILD object that is actually grabbed (e.g., the plane-box)")]
+        public GameObject interactionPart; 
+
+        public bool requireInteraction; 
+        public AudioClip voiceClip;
+    }
+
+    void Awake() 
+    { 
+        Instance = this; 
+        if (explorePivot) 
+        { 
+            initScale = explorePivot.localScale; 
+            initRot = explorePivot.localRotation; 
+        }
+    }
+
+    void Start()
+    {
+        InitializeExploreSliders();
+        InitializeExploreDropdown();
+        InitializeButtons(); 
+        SwitchMode(0);
+    }
+
+    void InitializeButtons()
+    {
+        if (btnNextStep != null)
+        {
+            btnNextStep.onClick.RemoveAllListeners();
+            btnNextStep.onClick.AddListener(AdvanceStep);
+        }
+    }
+
+    // =========================================================
+    // 1. MODE SWITCHING
+    // =========================================================
+    public void SwitchMode(int modeIndex)
+    {
+        currentMode = (LabMode)modeIndex;
+
+        if(rootExplore) rootExplore.SetActive(false);
+        if(rootLearning) rootLearning.SetActive(false);
+        if(rootInteractive) rootInteractive.SetActive(false);
+
+        if(uiPanelExploreLeft) uiPanelExploreLeft.SetActive(false);
+        if(uiPanelExploreRight) uiPanelExploreRight.SetActive(false);
+        if(uiPanelLearning) uiPanelLearning.SetActive(false);
+        if(uiPanelInteractive) uiPanelInteractive.SetActive(false);
+
+        switch (currentMode)
+        {
+            case LabMode.Explore:
+                if(rootExplore) rootExplore.SetActive(true);
+                if(uiPanelExploreLeft) uiPanelExploreLeft.SetActive(true);
+                if(uiPanelExploreRight) uiPanelExploreRight.SetActive(true);
+                break;
+
+            case LabMode.Learning:
+                if(rootLearning) rootLearning.SetActive(true);
+                if(uiPanelLearning) uiPanelLearning.SetActive(true);
+                StartLearningSession();
+                break;
+
+            case LabMode.Interactive:
+                if(rootInteractive) rootInteractive.SetActive(true);
+                if(uiPanelInteractive) uiPanelInteractive.SetActive(true);
+                break;
+        }
+    }
+
+    // =========================================================
+    // 2. EXPLORE MODE LOGIC
+    // =========================================================
+    void InitializeExploreSliders()
+    {
+        SetupRotationSlider(sliderRotX);
+        SetupRotationSlider(sliderRotY);
+        SetupRotationSlider(sliderRotZ);
+
+        if (sliderZoom)
+        {
+            sliderZoom.minValue = 0.5f;
+            sliderZoom.maxValue = 2.5f;
+            sliderZoom.value = 1.0f; 
+            sliderZoom.onValueChanged.AddListener((v) => UpdateExploreTransform());
+        }
+    }
+
+    void SetupRotationSlider(Slider s)
+    {
+        if(s != null)
+        {
+            s.minValue = 0f;
+            s.maxValue = 360f; 
+            s.onValueChanged.RemoveAllListeners();
+            s.onValueChanged.AddListener((v) => UpdateExploreTransform());
+        }
+    }
+
+    void InitializeExploreDropdown()
+    {
+        if (exploreDropdown == null) return;
+
+        exploreDropdown.ClearOptions();
+        List<string> options = new List<string>(); 
+
+        foreach (var part in exploreParts)
+        {
+            options.Add(part.name);
+        }
+
+        exploreDropdown.AddOptions(options);
+        exploreDropdown.onValueChanged.RemoveAllListeners();
+        exploreDropdown.onValueChanged.AddListener(OnExploreDropdownChanged);
+
+        if (exploreParts.Count > 0)
+        {
+            exploreDropdown.value = 0;
+            OnExploreDropdownChanged(0);
+        }
+    }
+
+    void OnExploreDropdownChanged(int index)
+    {
+        for (int i = 0; i < exploreParts.Count; i++)
+        {
+            if (exploreParts[i].modelPart != null)
+            {
+                bool isActive = (i == index);
+                exploreParts[i].modelPart.SetActive(isActive);
+            }
+        }
+    }
+
+    void UpdateExploreTransform()
+    {
+        if(!explorePivot) return;
+        
+        float x = sliderRotX ? sliderRotX.value : 0;
+        float y = sliderRotY ? sliderRotY.value : 0;
+        float z = sliderRotZ ? sliderRotZ.value : 0;
+        explorePivot.localRotation = Quaternion.Euler(x, y, z) * initRot;
+        
+        float scale = sliderZoom ? sliderZoom.value : 1.0f;
+        explorePivot.localScale = initScale * scale;
+    }
+
+    // =========================================================
+    // 3. LEARNING MODE LOGIC
+    // =========================================================
+    void StartLearningSession()
+    {
+        foreach(var step in learningSteps) 
+            if(step.visualRoot) step.visualRoot.SetActive(false);
+
+        currentStepIndex = -1;
+        AdvanceStep();
+    }
+
+    public void AdvanceStep()
+    {
+        // Cleanup old step
+        if(currentStepIndex >= 0 && currentStepIndex < learningSteps.Count)
+        {
+            if(learningSteps[currentStepIndex].visualRoot)
+                learningSteps[currentStepIndex].visualRoot.SetActive(false);
+        }
+
+        currentStepIndex++;
+
+        if (currentStepIndex >= learningSteps.Count)
+        {
+            instructionText.text = "Lab Completed!";
+            btnNextStep.interactable = false;
+            return;
+        }
+
+        StartCoroutine(PlayStepSequence(learningSteps[currentStepIndex]));
+    }
+
+    IEnumerator PlayStepSequence(LabStep step)
+    {
+        stepInteractionDone = false;
+        btnNextStep.interactable = false; 
+
+        if(labAudioSource && step.voiceClip) { labAudioSource.clip = step.voiceClip; labAudioSource.Play(); }
+
+        instructionText.text = "";
+        foreach(char c in step.instruction)
+        {
+            instructionText.text += c;
+            yield return new WaitForSeconds(typeWriterSpeed);
+        }
+
+        // SHOW THE PARENT (Visuals)
+        if(step.visualRoot) step.visualRoot.SetActive(true);
+
+        if (!step.requireInteraction)
+        {
+            btnNextStep.interactable = true;
+        }
+        else
+        {
+            instructionText.text += "\n<color=yellow>(Grab object to continue)</color>";
+        }
+    }
+
+    // Called by LabItem.cs
+    public void OnItemInteracted(LabItem item)
+    {
+        if (currentMode != LabMode.Learning) return;
+        if (currentStepIndex < 0 || currentStepIndex >= learningSteps.Count) return;
+
+        LabStep currentStep = learningSteps[currentStepIndex];
+
+        // CHECK AGAINST THE INTERACTION PART (The child), NOT the Visual Root
+        if (item.gameObject == currentStep.interactionPart)
+        {
+            if (!stepInteractionDone)
+            {
+                stepInteractionDone = true;
+                btnNextStep.interactable = true; 
+                instructionText.text = currentStep.instruction + "\n<color=green>Great! Press Next.</color>";
+            }
+        }
+    }
+}*/
